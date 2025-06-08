@@ -1,13 +1,14 @@
-# Sample Hardhat Project
+# Crowdfunding app
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+| Feature                | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| Campaign metadata      | Name, description, goal, deadline, owner               |
+| Tier system            | Custom funding levels with set prices                  |
+| Contribution tracking  | Tracks user funding per tier                           |
+| Campaign lifecycle     | Active → Successful/Failed based on goal & deadline    |
+| Refunds                | Users can reclaim funds if campaign fails              |
+| Withdrawal             | Owner can withdraw ETH if campaign succeeds            |
+| Pausable               | Owner can pause/unpause the contract                   |
+| Deadline extension     | Owner can extend time during active phase              |
+| State-checking helpers | `getCampaignStatus`, `getTiers`, `hasFundedTier`, etc. |
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
