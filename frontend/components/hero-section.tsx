@@ -28,7 +28,7 @@ export default function HeroSection() {
           </p>
           <div className="mt-6">
             <Button className="text-white bg-blue-500">
-              Donate Now and Make an Impact
+              Fund Now and Make an Impact
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>

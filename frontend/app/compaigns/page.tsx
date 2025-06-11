@@ -1,4 +1,4 @@
-import NavBarDonate from '@/components/nav-bar-compaigns';
+import NavBarCompaigns from '@/components/nav-bar-compaigns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -11,6 +11,8 @@ const campaigns = [
     duration: "30 Days Left",
     raised: 12500,
     goal: 20000,
+    backers: 150,
+    paused: true,
   },
   {
     id: 2,
@@ -19,6 +21,8 @@ const campaigns = [
     duration: "15 Days Left",
     raised: 8200,
     goal: 10000,
+    backers: 500,
+    paused: false,
   },
   {
     id: 3,
@@ -27,6 +31,8 @@ const campaigns = [
     duration: "10 Days Left",
     raised: 5750,
     goal: 15000,
+    backers: 200,
+    paused: false,
   },
 ];
 
@@ -35,7 +41,7 @@ export default function CompaignsPage() {
   return (
     <div className="min-h-screen">
       {/* --- Nav bar --- */}
-      <NavBarDonate/>
+      <NavBarCompaigns/>
 
       <section className="max-w-6xl mx-auto py-12 px-4">
         <h1 className="text-3xl font-bold text-center mb-10">Open Campaigns</h1>
@@ -51,16 +57,31 @@ export default function CompaignsPage() {
                 <CardContent>
                   <p className="text-gray-700 mb-2">{campaign.description}</p>
                   <p className="text-sm text-gray-500 mb-1">Duration: {campaign.duration}</p>
-                  <p className="text-sm text-gray-500 mb-2">
+                  <p className="text-sm text-gray-500 mb-1">
                     Raised: $
                     {campaign.raised ? campaign.raised.toLocaleString() : 0} / $
                     {campaign.goal ? campaign.goal.toLocaleString() : 0}
                   </p>
+                  <p className="text-sm text-gray-500 mb-2">Backers: {campaign.backers}</p>
 
                   <Progress value={progress} className="mb-4 h-3" />
-                  <Button className="w-full bg-sky-500 text-white">
-                    Donate Now
-                  </Button>
+                  {campaign.paused ? (
+                    <Button
+                      className="w-full bg-sky-500 text-white"
+                      disabled
+                    >
+                      Paused
+                    </Button>
+                  ) : (
+                    <Button
+                      asChild
+                      className="w-full bg-sky-500 text-white"
+                    >
+                      <a href="/compaign-details">
+                        Details
+                      </a>
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             );

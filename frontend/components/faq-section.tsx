@@ -16,7 +16,7 @@ const faqs = [
       "FundBase supports a wide range of projects including community, innovation, environment, education, and more.",
   },
   {
-    question: "How Can I Track the Progress of a Campaign I've Donated To?",
+    question: "How Can I Track the Progress of a Campaign I've Fund To?",
     answer:
       "You can track campaign updates, milestones, and progress directly from your dashboard after logging into FundBase.",
   },
