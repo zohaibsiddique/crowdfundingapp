@@ -44,7 +44,7 @@ export default function TransformingIdeasSection() {
   };
 
   return (
-    <section className="py-12 bg-slate-100 shadow-md px-4">
+    <section className="py-12  px-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <Button variant="outline" className="rounded-full text-sky-600 border-sky-600">

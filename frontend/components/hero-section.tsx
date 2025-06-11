@@ -14,7 +14,7 @@ const currencySymbols = [
 
 export default function HeroSection() {
   return (
-    <div className=" mx-auto flex flex-col lg:flex-row items-center bg-gradient-to-br from-white via-blue-100 to-indigo-100 justify-between py-16 px-30 space-y-15 lg:space-y-0">
+    <section className=" mx-auto flex flex-col lg:flex-row items-center bg-gradient-to-br from-white via-blue-100 to-indigo-100 justify-between py-16 px-30 space-y-15 lg:space-y-0">
       <div className="max-w-xl text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
             Empowering{' '}
@@ -71,7 +71,7 @@ export default function HeroSection() {
         />
       </div>
     </div>
-    </div>
+    </section>
     
   );
 }

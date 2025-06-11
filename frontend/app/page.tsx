@@ -9,27 +9,30 @@ import NavBar from '@/components/nav-bar';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-slate-100 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-100 to-white">
       {/* --- Nav bar --- */}
       <NavBar/>
 
-      {/* --- Hero Section --- */}
-      <HeroSection />
+      {/* page specific content  */}
+      <main>
+        {/* --- Hero Section --- */}
+        <HeroSection />
 
-      {/* --- About Section --- */}
-      <AboutSection/>
+        {/* --- About Section --- */}
+        <AboutSection/>
 
-      {/* --- Slide Section --- */}
-      <SlideSection/>
+        {/* --- Slide Section --- */}
+        <SlideSection/>
 
-      {/* --- Transforming Ideas Section --- */}
-      <TransformingIdeasSection/>
+        {/* --- Transforming Ideas Section --- */}
+        <TransformingIdeasSection/>
 
-      {/* --- FAQ Section --- */}
-      <FaqSection/>
-
+        {/* --- FAQ Section --- */}
+        <FaqSection/>
+      </main>
+      
       {/* --- Footer Section --- */}
       <FooterSection/>
-    </main>
+    </div>
   );
 }

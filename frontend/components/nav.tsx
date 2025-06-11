@@ -9,7 +9,7 @@ import { Sheet, SheetTrigger, SheetContent } from "./ui/sheet";
 
 export default function Nav() {
   return (
-    <nav>
+    <>
       {/* Desktop Navigation */}
       <div className="hidden lg:block">
         <NavigationMenu>
@@ -49,6 +49,6 @@ export default function Nav() {
           </SheetContent>
         </Sheet>
       </div>
-    </nav>
+    </>
   );
 }
