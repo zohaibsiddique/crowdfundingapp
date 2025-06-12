@@ -8,6 +8,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
+import AllCompaigns from '@/components/all-compaigns';
 
 const campaigns = [
   {
@@ -49,55 +50,9 @@ export default function CompaignsPage() {
       {/* --- Nav bar --- */}
       <NavBarCompaigns/>
 
-      {/* <section className="max-w-6xl mx-auto py-12 px-4">
-        <h1 className="text-3xl font-bold text-center mb-10">Campaigns</h1>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {campaigns.map((campaign) => {
-            const progress = (campaign.raised / campaign.goal) * 100;
-
-            return (
-              <Card key={campaign.id} className="rounded-2xl shadow-md">
-                <CardHeader>
-                  <CardTitle>{campaign.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 mb-2">{campaign.description}</p>
-                  <p className="text-sm text-gray-500 mb-1">Duration: {campaign.duration}</p>
-                  <p className="text-sm text-gray-500 mb-1">
-                    Raised: $
-                    {campaign.raised ? campaign.raised.toLocaleString() : 0} / $
-                    {campaign.goal ? campaign.goal.toLocaleString() : 0}
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">Backers: {campaign.backers}</p>
-
-                  <Progress value={progress} className="mb-4 h-3" />
-                  {campaign.paused ? (
-                    <Button
-                      className="w-full bg-sky-500 text-white"
-                      disabled
-                    >
-                      Paused
-                    </Button>
-                  ) : (
-                    <Button
-                      asChild
-                      className="w-full bg-sky-500 text-white"
-                    >
-                      <a href="/compaign-details">
-                        Details
-                      </a>
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </section> */}
-
-      <div className="max-w-6xl mx-auto py-12 px-4">
+      <div className="px-2">
       <Tabs defaultValue="all" className="w-full">
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-2">
           {/* Left Side Tabs */}
           <TabsList className="flex md:flex-col gap-2 md:w-1/4 w-full">
             <TabsTrigger value="all" className="justify-start">All Campaigns</TabsTrigger>
@@ -110,10 +65,10 @@ export default function CompaignsPage() {
             <TabsContent value="all">
               <Card>
                 <CardHeader>
-                  <CardTitle>All Campaigns</CardTitle>
+                  <CardTitle>All Compaigns</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>List of all campaigns goes here.</p>
+                   <AllCompaigns/>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -124,7 +79,7 @@ export default function CompaignsPage() {
                   <CardTitle>My Campaigns</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Your created campaigns listed here.</p>
+                   <AllCompaigns/>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -135,7 +90,7 @@ export default function CompaignsPage() {
                   <CardTitle>Funded Campaigns</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Campaigns that achieved their goals.</p>
+                   <AllCompaigns/>
                 </CardContent>
               </Card>
             </TabsContent>
