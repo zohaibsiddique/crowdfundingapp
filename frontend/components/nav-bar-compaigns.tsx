@@ -26,7 +26,7 @@ export default function NavBarCompaigns() {
 
         {/* CTA Button */}
         <div className="flex flex-row items-center space-x-4 lg:flex-row-reverse">
-          <Button asChild className="text-white ml-4 ">
+          <Button asChild className="text-white ml-4 bg-blue-500">
             <Link href="/compaigns" aria-label="View open fundraising campaigns">
               Connect Wallet
             </Link>

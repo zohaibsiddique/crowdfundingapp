@@ -67,7 +67,7 @@ export default function SliderSection() {
           <Button variant="outline" size="icon" onClick={prevSlide}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <Button size="icon" className="bg-sky-500 text-white" onClick={nextSlide}>
+          <Button size="icon" className="bg-blue-500 text-white" onClick={nextSlide}>
             <ArrowRight className="w-5 h-5" />
           </Button>
         </div>

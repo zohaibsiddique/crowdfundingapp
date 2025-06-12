@@ -47,13 +47,13 @@ export default function TransformingIdeasSection() {
     <section className="py-12  px-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <Button variant="outline" className="rounded-full text-sky-600 border-sky-600">
+          <Button variant="outline" className="rounded-full text-blue-500 border-blue-500">
             Discover Our Platform
           </Button>
           <h2 className="text-2xl font-bold text-center flex-1 -ml-12">
             Transforming Ideas into Reality
           </h2>
-          <Button className="bg-sky-500 text-white rounded-full px-4">
+          <Button className="bg-blue-500 text-white rounded-full px-4">
             Start Your Journey <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>

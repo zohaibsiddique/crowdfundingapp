@@ -15,7 +15,7 @@ export default function FooterSection() {
   return (
     <footer className="relative bg-black text-white pt-20 pb-6 overflow-hidden">
       {/* Blue Diagonal Top Border */}
-      <div className="absolute top-0 left-0 w-full h-20 bg-sky-500 -skew-y-3 -translate-y-1/2" />
+      <div className="absolute top-0 left-0 w-full h-20 bg-blue-500 -skew-y-3 -translate-y-1/2" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* FundBase Brand & Description */}
@@ -67,11 +67,11 @@ export default function FooterSection() {
         <div>
           <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
           <div className="flex gap-4 text-white text-xl">
-            <Facebook className="hover:text-sky-400 cursor-pointer" />
-            <Twitter className="hover:text-sky-400 cursor-pointer" />
-            <Instagram className="hover:text-sky-400 cursor-pointer" />
-            <Mail className="hover:text-sky-400 cursor-pointer" />
-            <Youtube className="hover:text-sky-400 cursor-pointer" />
+            <Facebook className="hover:text-blue-500 cursor-pointer" />
+            <Twitter className="hover:text-blue-500 cursor-pointer" />
+            <Instagram className="hover:text-blue-500 cursor-pointer" />
+            <Mail className="hover:text-blue-500 cursor-pointer" />
+            <Youtube className="hover:text-blue-500 cursor-pointer" />
           </div>
         </div>
       </div>

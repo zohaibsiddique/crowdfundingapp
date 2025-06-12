@@ -59,7 +59,7 @@ export default function AllCompaigns() {
                 <Progress value={progress} className="mb-4 h-3" />
                 {campaign.paused ? (
                     <Button
-                    className="w-full bg-sky-500 text-white"
+                    className="w-full bg-blue-500 text-white"
                     disabled
                     >
                     Paused
@@ -67,7 +67,7 @@ export default function AllCompaigns() {
                 ) : (
                     <Button
                     asChild
-                    className="w-full bg-sky-500 text-white"
+                    className="w-full bg-blue-500 text-white"
                     >
                     <a href="/compaign-details">
                         Details
