@@ -33,17 +33,23 @@ contract CrowdfundingFactory {
 
     function createCampaign(
         string memory _name,
-        string memory _description,
-        uint256 _goal,
-        uint256 _durationInDays
+        uint256 _minGoal,
+        uint256 _maxGoal,
+        uint256 _durationInDays,
+        string memory _description
     ) external notPaused {
+        require(_minGoal > 0, "Minimum goal must be > 0");
+        require(_maxGoal >= _minGoal, "Max goal must be >= min goal");
+
         Crowdfunding newCampaign = new Crowdfunding(
             msg.sender,
             _name,
             _description,
-            _goal,
+            _minGoal,
+            _maxGoal,
             _durationInDays
         );
+
         address campaignAddress = address(newCampaign);
 
         Campaign memory campaign = Campaign({

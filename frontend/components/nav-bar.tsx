@@ -28,7 +28,7 @@ export default function NavBar() {
         {/* CTA Button */}
         <div className="flex flex-row items-center space-x-4 lg:flex-row-reverse">
           <Button asChild className="text-white ml-4 bg-blue-500">
-            <Link href="/compaigns" aria-label="View open fundraising campaigns">
+            <Link href="/campaigns" aria-label="View open fundraising campaigns">
               Fund Now
               <ArrowRight className="ml-2 w-4 h-4" />
             </Link>

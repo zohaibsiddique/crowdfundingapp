@@ -1,4 +1,4 @@
-import NavBarFund from '@/components/nav-bar-compaigns';
+import NavBarFund from '@/components/nav-bar-campaigns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +16,7 @@ const campaign = [
 ];
 
 
-export default function CompaignDetailsPage() {
+export default function CampaignsDetailsPage() {
   return (
     <div className="min-h-screen">
       {/* --- Nav bar --- */}

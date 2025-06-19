@@ -1,4 +1,5 @@
-import NavBarCompaigns from '@/components/nav-bar-compaigns';
+
+import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -8,48 +9,15 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import AllCompaigns from '@/components/all-compaigns';
+import AllCampaigns from '@/components/all-campaigns';
+import Link from 'next/link';
 
-const campaigns = [
-  {
-    id: 1,
-    name: "Education for All",
-    description: "Help provide quality education to underprivileged children.",
-    duration: "30 Days Left",
-    raised: 12500,
-    goal: 20000,
-    backers: 150,
-    paused: true,
-  },
-  {
-    id: 2,
-    name: "Clean Water Project",
-    description: "Support building wells in rural areas to ensure access to clean water.",
-    duration: "15 Days Left",
-    raised: 8200,
-    goal: 10000,
-    backers: 500,
-    paused: false,
-  },
-  {
-    id: 3,
-    name: "Medical Aid for Refugees",
-    description: "Provide emergency medical supplies and care for displaced families.",
-    duration: "10 Days Left",
-    raised: 5750,
-    goal: 15000,
-    backers: 200,
-    paused: false,
-  },
-];
-
-
-export default function CompaignsPage() {
+export default function CampaignsPage() {
   return (
     <div className="min-h-screen">
       {/* --- Nav bar --- */}
-      <NavBarCompaigns/>
-
+      <NavBarCampaigns/>
+       
       <div className="px-2">
         <Tabs defaultValue="all" className="w-full">
           <div className="flex flex-col md:flex-row gap-2">
@@ -65,10 +33,17 @@ export default function CompaignsPage() {
               <TabsContent value="all">
                 <Card className='border-none shadow-none'>
                   <CardHeader>
-                    <CardTitle>All Compaigns</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>All Campaigns</CardTitle>
+                      <Button asChild className="text-white bg-green-500">
+                        <Link href="/campaigns/create-campaign" aria-label="Create a new campaign">
+                          New Campaign
+                        </Link>
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <AllCompaigns/>
+                    <AllCampaigns/>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -76,10 +51,17 @@ export default function CompaignsPage() {
               <TabsContent value="my">
                 <Card className='border-none shadow-none'>
                   <CardHeader>
-                    <CardTitle>My Campaigns</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>My Campaigns</CardTitle>
+                      <Button asChild className="text-white bg-green-500">
+                        <Link href="/campaigns/create-campaign" aria-label="Create a new campaign">
+                          New Campaign
+                        </Link>
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <AllCompaigns/>
+                    <AllCampaigns/>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -87,10 +69,17 @@ export default function CompaignsPage() {
               <TabsContent value="funded">
                 <Card className='border-none shadow-none'>
                   <CardHeader>
-                    <CardTitle>Funded Campaigns</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Funded Campaigns</CardTitle>
+                      <Button asChild className="text-white bg-green-500">
+                        <Link href="/campaigns/create-campaign" aria-label="Create a new campaign">
+                          New Campaign
+                        </Link>
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <AllCompaigns/>
+                    <AllCampaigns/>
                   </CardContent>
                 </Card>
               </TabsContent>

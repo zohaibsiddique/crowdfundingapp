@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { connectWallet } from "./connect-wallet"
+import { connectWallet } from "../app/contract-utils/connect-wallet"
 import { useEffect, useState } from "react";
 import { Wallet } from "lucide-react";
 
@@ -70,7 +70,7 @@ export default function NavBarCompaigns() {
               <Button variant="outline" className="hover:cursor-pointer" onClick={handleDisconnect}>
                 Disconnect
               </Button>
-              <span className="font-mono text-sm text-gray-700 ml-1">{wallet.address}</span>
+                <span className="font-mono text-sm text-gray-700 ml-1">{wallet.address}</span>
               <Wallet className="w-5 h-5" />
             </>
           ) : (

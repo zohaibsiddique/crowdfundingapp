@@ -1,34 +1,3 @@
-// 'use client';
-
-// import React, { useState } from "react";
-// import { connectWallet } from "../components/connect-wallet"
-
-// export default function Home() {
-//   const [wallet, setWallet] = useState<{
-//     provider: any;
-//     signer: any;
-//     address: string;
-//   } | null>(null);
-
-//   const handleConnect = async () => {
-//     const result = await connectWallet();
-//     if (result) setWallet(result);
-//   };
-
-//   return (
-//     <div>
-//       <button onClick={handleConnect}>Connect Wallet</button>
-//       {wallet && (
-//         <>
-//           <p>Address: {wallet.address}</p>
-//           <pre>{JSON.stringify(wallet.provider, null, 2)}</pre>
-//         </>
-//       )}
-//     </div>
-//   );
-// }
-
-
 import HeroSection from '@/components/hero-section';
 import AboutSection from '@/components/about-section';
 import SlideSection from '@/components/slide-section';
