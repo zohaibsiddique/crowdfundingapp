@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
+import { connectCrowdfundingContract } from "@/app/contract-utils/connect-crowdfunding-contract";
 
 export default function AllCompaigns() {
 
@@ -46,11 +47,20 @@ export default function AllCompaigns() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const contract = await connectFactoryContract();
-        console.log("Factory Contract:", contract);
-        const allCampaigns = await contract.getAllCampaigns();
+        const factoryContract = await connectFactoryContract();
+        console.log("Factory Contract:", factoryContract);
+
+        const allCampaigns = await factoryContract.getAllCampaigns();
         console.log("All Campaigns:", allCampaigns);
-        setCampaignss(allCampaigns);
+
+        // setCampaignss(allCampaigns);
+
+        // if (allCampaigns.length > 0 && allCampaigns[0]?.campaignAddress) {
+        //   const crowdfundingContract = await connectCrowdfundingContract(allCampaigns[0].campaignAddress);
+        //   console.log("Campaign", crowdfundingContract.name());
+        // } else {
+        //   console.warn("No campaigns found or no campaign address in allCampaigns[0]");
+        // }
       } catch (err) {
         console.error("Error fetching campaigns:", err);
       }

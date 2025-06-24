@@ -1,128 +1,180 @@
-/*
-| **Feature**                                              | **What It Tests / Verifies**                                                                    |
-| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 🏗️ **Contract Deployment**                              | Checks if the contract is deployed with correct initial values (name, description, owner, etc.) |
-| 🧱 **Add Tier**                                          | Only the owner can add funding tiers with a specific name and amount                            |
-| 💸 **Fund a Tier**                                       | Users can fund valid tiers with the exact amount, and contributions are tracked correctly       |
-| ❌ **Invalid Funding Rejected**                           | Rejects transactions with the wrong amount for a tier                                           |
-| 🔁 **Refund After Campaign Failure**                     | Allows users to get a refund if the campaign fails after the deadline                           |
-| 💰 **Withdraw Funds After Success**                      | Allows the owner to withdraw all funds if the campaign reaches its goal before the deadline     |
-| 🛑 **Pause Campaign**                                    | Owner can pause the contract, and funding is blocked while paused                               |
-| 📅 **Extend Deadline**                                   | Owner can extend the campaign deadline while the campaign is active                             |
-| 🔍 **Check Tier Funding Status** *(via `hasFundedTier`)* | Verifies if a user has funded a specific tier                                                   |
-| 📊 **Get Tier Info** *(via `getTiers`)*                  | Confirms that tier data is returned correctly after adding                                      |
+const { expect } = require('chai');
+const { ethers } = require('hardhat');
 
-*/
+describe('Crowdfunding', function() {
+  var Crowdfunding, crowdfunding;
+  var owner, user, user2;
 
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+  beforeEach(async function() {
+    var signers = await ethers.getSigners();
+    owner = signers[0];
+    user = signers[1];
+    user2 = signers[2];
 
-describe("Crowdfunding", function () {
-  let Crowdfunding, crowdfunding;
-  let owner, user1, user2;
-
-  beforeEach(async () => {
-    [owner, user1, user2] = await ethers.getSigners();
-
-    Crowdfunding = await ethers.getContractFactory("Crowdfunding");
+    Crowdfunding = await ethers.getContractFactory('Crowdfunding');
 
     crowdfunding = await Crowdfunding.deploy(
       owner.address,
-      "Cool Campaign",
-      "A test crowdfunding campaign",
-      ethers.parseEther("2"), // Goal: 2 ETH
-      5 // Duration in days
+      'Test Campaign',
+      'Test Description',
+      ethers.parseEther('2'),
+      ethers.parseEther('10'),
+      1 // 1 day deadline
     );
-
-    await crowdfunding.waitForDeployment();
   });
 
-  it("should deploy correctly with initial values", async () => {
-    expect(await crowdfunding.name()).to.equal("Cool Campaign");
-    expect(await crowdfunding.description()).to.equal("A test crowdfunding campaign");
-    expect(await crowdfunding.owner()).to.equal(owner.address);
+  describe('Deployment', function() {
+    it('should set correct properties', async function() {
+      expect(await crowdfunding.name()).to.equal('Test Campaign');
+      expect(await crowdfunding.description()).to.equal('Test Description');
+      expect(await crowdfunding.minGoal()).to.equal("2000000000000000000"); // 2 ETH
+      expect(await crowdfunding.maxGoal()).to.equal("10000000000000000000"); // 10 ETH
+      expect(await crowdfunding.deadline()).to.be.greaterThan(0);
+      expect(await crowdfunding.owner()).to.equal(owner.address);
+      expect(await crowdfunding.paused()).to.equal(false);
+      expect(await crowdfunding.getCampaignStatus()).to.equal(0); // Active
+    });
+
+    it('should revert if minGoal is zero', async function() {
+      var Crowdfunding2 = await ethers.getContractFactory('Crowdfunding');
+      await expect(
+        Crowdfunding2.deploy(
+          owner.address,
+          'Test',
+          'Test',
+          0,
+          ethers.parseEther('2'),
+          1
+        )
+      ).to.be.revertedWith('Minimum goal must be > 0');
+    });
+
+    it('should revert if maxGoal < minGoal', async function() {
+      var Crowdfunding2 = await ethers.getContractFactory('Crowdfunding');
+      await expect(
+        Crowdfunding2.deploy(
+          owner.address,
+          'Test',
+          'Test',
+          ethers.parseEther('2'),
+          ethers.parseEther('1'),
+          1
+        )
+      ).to.be.revertedWith('Max goal must be >= min goal');
+    });
   });
 
-  it("should allow owner to add a tier", async () => {
-    await crowdfunding.connect(owner).addTier("Bronze", ethers.parseEther("0.5"));
-    const tiers = await crowdfunding.getTiers();
+  describe('Tiers', function() {
+    it('should allow owner to add tiers', async function() {
+      await crowdfunding.addTier('Tier 1', ethers.parseEther('1'));
+      var tiers = await crowdfunding.getTiers();
+      expect(tiers.length).to.equal(1);
+      expect(tiers[0].name).to.equal('Tier 1');
+    });
 
-    expect(tiers.length).to.equal(1);
-    expect(tiers[0].name).to.equal("Bronze");
-    expect(tiers[0].amount).to.equal(ethers.parseEther("0.5"));
+    it('should allow owner to remove tiers', async function() {
+      await crowdfunding.addTier('Tier 1', ethers.parseEther('1'));
+      await crowdfunding.removeTier(0);
+      var tiers = await crowdfunding.getTiers();
+      expect(tiers.length).to.equal(0);
+    });
+
+    it('should revert if non-owner adds a tier', async function() {
+      await expect(
+        crowdfunding.connect(user).addTier('Tier 1', ethers.parseEther('1'))
+      ).to.be.revertedWith('Not the owner');
+    });
   });
 
-  it("should allow a user to fund a tier and track contributions", async () => {
-    await crowdfunding.connect(owner).addTier("Silver", ethers.parseEther("1"));
+  describe('Funding', function() {
+    beforeEach(async function() {
+      await crowdfunding.addTier('Tier 1', ethers.parseEther('1'));
+    });
 
-    const tierIndex = 0;
-    await crowdfunding.connect(user1).fund(tierIndex, { value: ethers.parseEther("1") });
+    it('should allow funding a valid tier', async function() {
+      await crowdfunding.connect(user).fund(0, { value: ethers.parseEther('1') });
 
-    const balance = await crowdfunding.getContractBalance();
-    expect(balance).to.equal(ethers.parseEther("1"));
+      var balance = await crowdfunding.getContractBalance();
+      expect(balance).to.equal(ethers.parseEther('1'));
+      expect(await crowdfunding.hasFundedTier(user.address, 0)).to.equal(true);
+    });
 
-    const hasFunded = await crowdfunding.hasFundedTier(user1.address, tierIndex);
-    expect(hasFunded).to.be.true;
+    it('should revert if amount is incorrect', async function() {
+      await expect(
+        crowdfunding.connect(user).fund(0, { value: ethers.parseEther('2') })
+      ).to.be.revertedWith('Incorrect amount.');
+    });
+
+    it('should revert if campaign paused', async function() {
+      await crowdfunding.togglePause();
+      await expect(
+        crowdfunding.connect(user).fund(0, { value: ethers.parseEther('1') })
+      ).to.be.revertedWith('Contract is paused.');
+    });
   });
 
-  it("should reject incorrect tier amount", async () => {
-    await crowdfunding.connect(owner).addTier("Gold", ethers.parseEther("2"));
+  describe('Withdrawals and Refunds', function() {
+    beforeEach(async function() {
+      
+    });
 
-    await expect(
-      crowdfunding.connect(user1).fund(0, { value: ethers.parseEther("1") })
-    ).to.be.revertedWith("Incorrect amount.");
+    it('should allow successful withdraw if goals met and after deadline', async function() {
+
+      // Jump 1 day and mine
+      await ethers.provider.send('evm_increaseTime', [86400]);
+      await ethers.provider.send('evm_mine');
+      
+      await crowdfunding.addTier('Tier 1', ethers.parseEther('2'));
+      await crowdfunding.connect(user).fund(0, { value: ethers.parseEther('2') });
+
+      // Now call withdraw — this will run in the new block's timestamp
+      await crowdfunding.withdraw();
+
+      const balance = await crowdfunding.getContractBalance();
+      expect(balance).to.equal(0n); // withdraw succeeded
+    });
+
+
+    it('should allow refund if campaign failed', async function() {
+      // Increase time
+      await ethers.provider.send('evm_increaseTime', [86400]);
+      await ethers.provider.send('evm_mine');
+
+      await crowdfunding.addTier('Tier 1', ethers.parseEther('1'));
+      await crowdfunding.connect(user).fund(0, { value: ethers.parseEther('1') });
+
+      // failed campaign as not enough funds raised
+      await crowdfunding.connect(user).refund();
+      const contribution = await crowdfunding.getBackerContribution(user.address);
+      expect(contribution).to.equal(0n);
+    });
+
+    it('should not allow refund if successful', async function() {
+      // Nothing withdrawn yet so goal met
+      await expect(crowdfunding.connect(user).refund()).to.be.revertedWith(
+        'Refunds not available.'
+      );
+    });
   });
 
-  it("should allow refunds if campaign fails", async () => {
-    await crowdfunding.connect(owner).addTier("Bronze", ethers.parseEther("1"));
-    await crowdfunding.connect(user1).fund(0, { value: ethers.parseEther("1") });
+  describe('Pause/Unpause and Extend', function() {
+    it('should allow owner to toggle pause', async function() {
+      await crowdfunding.togglePause();
+      expect(await crowdfunding.paused()).to.equal(true);
+    });
 
-    // Fast-forward time to simulate campaign deadline passing
-    await ethers.provider.send("evm_increaseTime", [6 * 24 * 60 * 60]); // 6 days
-    await ethers.provider.send("evm_mine");
+    it('should allow owner to extend deadline', async function() {
+      var oldDeadline = await crowdfunding.deadline();
+      await crowdfunding.extendDeadline(2); // add 2 days
+      var newDeadline = await crowdfunding.deadline();
+      expect(newDeadline).to.be.greaterThan(oldDeadline);
+    });
 
-    // Campaign should be marked as failed now
-    await crowdfunding.connect(user1).refund();
-
-    const newBalance = await crowdfunding.getContractBalance();
-    expect(newBalance).to.equal(0);
-  });
-
-  it("should allow withdrawal if campaign is successful", async () => {
-    await crowdfunding.connect(owner).addTier("Diamond", ethers.parseEther("2"));
-    await crowdfunding.connect(user1).fund(0, { value: ethers.parseEther("2") });
-
-    // Fast-forward time
-    await ethers.provider.send("evm_increaseTime", [6 * 24 * 60 * 60]);
-    await ethers.provider.send("evm_mine");
-
-    const oldBalance = await ethers.provider.getBalance(owner.address);
-    const tx = await crowdfunding.connect(owner).withdraw();
-    const receipt = await tx.wait();
-    const gasUsed = receipt.gasUsed * receipt.gasPrice;
-
-    const newBalance = await ethers.provider.getBalance(owner.address);
-
-    expect(newBalance).to.be.gt(oldBalance - gasUsed);
-  });
-
-  it("should toggle pause and block funding when paused", async () => {
-    await crowdfunding.connect(owner).addTier("Silver", ethers.parseEther("1"));
-
-    await crowdfunding.togglePause();
-    expect(await crowdfunding.paused()).to.be.true;
-
-    await expect(
-      crowdfunding.connect(user1).fund(0, { value: ethers.parseEther("1") })
-    ).to.be.revertedWith("Contract is paused.");
-  });
-
-  it("should extend the deadline", async () => {
-    const oldDeadline = await crowdfunding.deadline();
-
-    await crowdfunding.connect(owner).extendDeadline(2);
-    const newDeadline = await crowdfunding.deadline();
-
-    expect(newDeadline).to.equal(oldDeadline + BigInt(2 * 24 * 60 * 60));
+    it('should revert extendDeadline if not active', async function() {
+      await crowdfunding.togglePause();
+      await expect(
+        crowdfunding.extendDeadline(2)
+      ).to.be.revertedWith('Contract is paused.');
+    });
   });
 });

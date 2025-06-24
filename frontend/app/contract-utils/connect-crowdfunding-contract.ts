@@ -1,7 +1,7 @@
 import { BrowserProvider, ethers } from "ethers";
-import { CROWDFUNDING_FACTORY_ABI, CROWDFUNDING_FACTORY_ADDRESS } from "./crowdfundingfactory-abi";
+import { CROWDFUNDING_ABI } from "./crowdfunding-abi";
 
-export const connectFactoryContract = async () => {
+export const connectCrowdfundingContract = async (compaignAddress:any) => {
   if (typeof window === "undefined" || !window.ethereum) {
     throw new Error("MetaMask not found");
   }
@@ -10,8 +10,8 @@ export const connectFactoryContract = async () => {
   const signer = provider.getSigner();
 
   const contract = new ethers.Contract(
-    CROWDFUNDING_FACTORY_ADDRESS,
-    CROWDFUNDING_FACTORY_ABI,
+    compaignAddress,
+    CROWDFUNDING_ABI,
     await signer
   );
 

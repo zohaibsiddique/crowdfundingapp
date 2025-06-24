@@ -33,10 +33,10 @@ contract CrowdfundingFactory {
 
     function createCampaign(
         string memory _name,
+        string memory _description,
         uint256 _minGoal,
         uint256 _maxGoal,
-        uint256 _durationInDays,
-        string memory _description
+        uint256 _durationInDays
     ) external notPaused {
         require(_minGoal > 0, "Minimum goal must be > 0");
         require(_maxGoal >= _minGoal, "Max goal must be >= min goal");

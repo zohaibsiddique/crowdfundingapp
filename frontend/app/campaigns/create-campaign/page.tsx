@@ -136,7 +136,7 @@ export default function CreateCampaignForm() {
             name="_description"
             value={form._description}
             onChange={handleChange}
-            required
+            
           />
         </div>
         <Button type="submit" className="hover:cursor-pointer">Create</Button>

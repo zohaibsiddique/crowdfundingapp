@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
+
 contract Crowdfunding {
     string public name;
     string public description;
@@ -66,6 +68,13 @@ contract Crowdfunding {
         if(state == CampaignState.Active) {
             uint256 balance = address(this).balance;
 
+            console.log("Current balance:", balance);
+            console.log("Min goal:", minGoal);
+            console.log("Max goal:", maxGoal);
+            console.log("current block time:", block.timestamp);
+            console.log("Deadline:", deadline);
+            console.log("deadline crossed:", block.timestamp >= deadline);
+
             if (block.timestamp >= deadline) {
                 if (balance >= minGoal && balance <= maxGoal) {
                     state = CampaignState.Successful;
@@ -77,6 +86,7 @@ contract Crowdfunding {
                     state = CampaignState.Successful;
                 }
             }
+            
         }
     }
 
@@ -86,6 +96,7 @@ contract Crowdfunding {
         require(address(this).balance <= maxGoal, "Campaign has reached its maximum goal.");
 
         tiers[_tierIndex].backers++;
+        console.log("by backer:", msg.sender, "with amount:", msg.value);
         backers[msg.sender].totalContribution += msg.value;
         backers[msg.sender].fundedTiers[_tierIndex] = true;
 
@@ -107,6 +118,7 @@ contract Crowdfunding {
         checkAndUpdateCampaignState();
         require(state == CampaignState.Successful, "Campaign not successful.");
         uint256 balance = address(this).balance;
+        console.log("Withdrawing balance:", balance);
         require(balance > 0, "No balance to withdraw");
         payable(owner).transfer(balance);
     }
@@ -119,6 +131,10 @@ contract Crowdfunding {
         checkAndUpdateCampaignState();
         require(state == CampaignState.Failed, "Refunds not available.");
         uint256 amount = backers[msg.sender].totalContribution;
+        uint256 balance = address(this).balance;
+        console.log("Refunding amount:", amount);
+        console.log("Contract balance:", balance);
+        console.log("msg sender:", msg.sender);
         require(amount > 0, "No contribution to refund");
         backers[msg.sender].totalContribution = 0;
         payable(msg.sender).transfer(amount);
@@ -144,7 +160,14 @@ contract Crowdfunding {
         return state;
     }
 
-    function extendDeadline(uint256 _daysToAdd) public onlyOwner campaignOpen {
+    function extendDeadline(uint256 _daysToAdd) public onlyOwner campaignOpen notPaused {
         deadline += _daysToAdd * 1 days;
     }
+
+    function getBackerContribution(address backer) public view returns (uint256) {
+        return backers[backer].totalContribution;
+    }
+
+
+    
 }
