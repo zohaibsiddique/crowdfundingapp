@@ -1,5 +1,5 @@
  export const CROWDFUNDING_ABI = 
- [
+  [
     {
       "inputs": [
         {
@@ -10,6 +10,11 @@
         {
           "internalType": "string",
           "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_description",
           "type": "string"
         },
         {
@@ -26,11 +31,6 @@
           "internalType": "uint256",
           "name": "_durationInDays",
           "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_description",
-          "type": "string"
         }
       ],
       "stateMutability": "nonpayable",
@@ -123,6 +123,25 @@
       "name": "fund",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "backer",
+          "type": "address"
+        }
+      ],
+      "name": "getBackerContribution",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

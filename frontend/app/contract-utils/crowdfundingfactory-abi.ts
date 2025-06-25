@@ -47,6 +47,11 @@
           "type": "string"
         },
         {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
+        },
+        {
           "internalType": "uint256",
           "name": "_minGoal",
           "type": "uint256"
@@ -60,11 +65,6 @@
           "internalType": "uint256",
           "name": "_durationInDays",
           "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_description",
-          "type": "string"
         }
       ],
       "name": "createCampaign",
@@ -222,4 +222,4 @@
     }
   ]
 
-export const CROWDFUNDING_FACTORY_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"; // Replace with your actual contract address
+export const CROWDFUNDING_FACTORY_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with your actual contract address
