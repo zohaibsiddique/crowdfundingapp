@@ -7,7 +7,7 @@ export const connectFactoryContract = async () => {
   }
 
   const provider = new BrowserProvider(window.ethereum);
-  const signer = provider.getSigner();
+  const signer = await provider.getSigner();
 
   const contract = new ethers.Contract(
     CROWDFUNDING_FACTORY_ADDRESS,
