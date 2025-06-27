@@ -2,58 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { Progress } from "./ui/progress";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
 import { connectCrowdfundingContract } from "@/app/contract-utils/connect-crowdfunding-contract";
+import { ArrowRightIcon } from "lucide-react";
 
 export default function AllCompaigns() {
 
-  const campaigns = [
-    {
-      id: 1,
-      name: "Education for All",
-      description: "Help provide quality education to underprivileged children.",
-      duration: "30 Days Left",
-      raised: 12500,
-      goal: 20000,
-      backers: 150,
-      paused: true,
-    },
-    {
-      id: 2,
-      name: "Clean Water Project",
-      description: "Support building wells in rural areas to ensure access to clean water.",
-      duration: "15 Days Left",
-      raised: 8200,
-      goal: 10000,
-      backers: 500,
-      paused: false,
-    },
-    {
-      id: 3,
-      name: "Medical Aid for Refugees",
-      description: "Provide emergency medical supplies and care for displaced families.",
-      duration: "10 Days Left",
-      raised: 5750,
-      goal: 15000,
-      backers: 200,
-      paused: false,
-    },
-  ];
-
-  const [campaignss, setCampaignss] = useState([]);
+  
+  const [campaigns, setCampaigns] = useState([]);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
+        setCampaigns([]); // Reset campaigns before fetching
         const factoryContract = await connectFactoryContract();
         console.log("Factory Contract:", factoryContract);
 
         const allCampaigns = await factoryContract.getAllCampaigns();
         console.log("All Campaigns:", allCampaigns);
 
-        // setCampaignss(allCampaigns);
+        setCampaigns(allCampaigns);
 
         // if (allCampaigns.length > 0 && allCampaigns[0]?.campaignAddress) {
         //   const crowdfundingContract = await connectCrowdfundingContract(allCampaigns[0].campaignAddress);
@@ -75,36 +44,27 @@ export default function AllCompaigns() {
         <p>Loading campaigns...</p>
       ) : (
         campaigns.map((campaign, i) => {
-          const progress =
-            Number(campaign.raised) && Number(campaign.goal)
-              ? (Number(campaign.raised) / Number(campaign.goal)) * 100
-              : 0;
-
           return (
             <Card key={i} className="rounded-2xl shadow-md">
               <CardHeader>
-                <CardTitle>{campaign.name}</CardTitle>
+                <CardTitle className="flex justify-between items-start">
+                  <span>{campaign.name}</span>
+                  <span className="text-xs text-gray-500 ml-2 self-center">
+                    {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 mb-2">{campaign.description}</p>
-                <p className="text-sm text-gray-500 mb-1">
-                  Duration: {campaign.duration}
-                </p>
-                <p className="text-sm text-gray-500 mb-1">
-                  Raised: {campaign.raised} / {campaign.goal}
-                </p>
-                <p className="text-sm text-gray-500 mb-2">
-                  Backers: {campaign.backers || 0}
-                </p>
-
-                <Progress value={progress} className="mb-4 h-3" />
                 {campaign.paused ? (
                   <Button className="w-full bg-blue-500 text-white" disabled>
                     Paused
                   </Button>
                 ) : (
                   <Button asChild className="w-full bg-blue-500 text-white">
-                    <a href="/compaign-details">Details</a>
+                    <a href="/compaign-details">
+                      <span>View Campaign</span>
+                      <ArrowRightIcon className="ml-2 h-4 w-4" />
+                    </a>
                   </Button>
                 )}
               </CardContent>
