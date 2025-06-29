@@ -64,14 +64,16 @@ export default function NavBarCompaigns() {
         </Link>
 
         {/* Button */}
-        <div className="flex flex-row items-center space-x-4 lg:flex-row-reverse">
+        <div className="flex flex-row items-center space-x-4 ">
+            <Link href="/campaigns" className="font-semibold transition-colors duration-200 hover:bg-gray-100 px-2 py-1 rounded">
+              Campaigns
+            </Link>
           {wallet ? (
             <>
+              <span>{wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}</span>
               <Button variant="outline" className="hover:cursor-pointer" onClick={handleDisconnect}>
                 Disconnect
               </Button>
-                <span className="font-mono text-sm text-gray-700 ml-1">{wallet.address}</span>
-              <Wallet className="w-5 h-5" />
             </>
           ) : (
             <Button
