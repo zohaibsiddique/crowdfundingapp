@@ -2,6 +2,7 @@
 import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdfunding-contract';
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -15,6 +16,19 @@ const CampaignPage = () => {
 
     const [campaign, setCampaign] = useState({});
     const [loading, setLoading] = useState(true);
+    const [showAddTierForm, setShowAddTierForm] = useState(false);
+    const [progress, setProgress] = useState<string>("");
+    const [form, setForm] = useState({
+        _name: "",
+        _description: "",
+        _minGoal: "",
+        _maxGoal: "",
+        _durationInDays: "",
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
     useEffect(() => {
         const fetchCampaign = async () => {
@@ -31,7 +45,12 @@ const CampaignPage = () => {
                 const deadline = await crowdfundingContract.deadline();
                 const owner = await crowdfundingContract.owner();
                 const paused = await crowdfundingContract.paused();
-
+                const tiers = await crowdfundingContract.getTiers();
+                const formattedTiers = tiers.map((tier: any) => ({
+                    name: tier.name.toString(),
+                    amount: tier.amount.toString(),
+                    backers: tier.backers.toString(),
+                }));
                 const campaign = {
                     name: name.toString(),
                     description: description.toString(),
@@ -40,6 +59,7 @@ const CampaignPage = () => {
                     deadline: deadline.toString(),
                     owner: owner.toString(),
                     paused: paused.toString(),
+                    tiers: formattedTiers,
                 };
                 // Set the campaign state with the fetched data
                 setCampaign(campaign);
@@ -54,6 +74,37 @@ const CampaignPage = () => {
         fetchCampaign();
     }, []);
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+    
+        let isMounted = true;
+        setProgress("Connecting to contract...");
+    
+        try {
+          const contract = await connectCrowdfundingContract(campaignAddress);
+          if (!isMounted) return;
+    
+          setProgress("Adding Tier...");
+          await contract.addTier(
+            form.name,
+            form.amount,
+          );
+          if (!isMounted) return;
+    
+          setProgress("Tier added successfully!");
+          setShowAddTierForm(false)
+          setTimeout(() => setProgress(""), 1500); // Auto close dialog after success
+        } catch (error: any) {
+          if (!isMounted) return;
+          setProgress(`Error: ${error.message || "Failed to add tier."}`);
+          setTimeout(() => setProgress(""), 2500); // Auto close dialog after error
+        }
+    
+        return () => {
+          isMounted = false;
+        };
+      };
+
     return (
         <>
             <NavBarCampaigns />
@@ -66,38 +117,111 @@ const CampaignPage = () => {
                 {loading ? (
                     <div>Loading campaign data...</div>
                 ) : (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-2xl">{campaign.name}</CardTitle>
-                            <CardDescription>{campaign.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid gap-4">
-                            <div>
-                                <strong>Minimum Goal:</strong>{" "}
-                                <span className="text-green-600">{campaign.minGoal}</span>
-                            </div>
-                            <div>
-                                <strong>Maximum Goal:</strong>{" "}
-                                <span className="text-green-600">{campaign.maxGoal}</span>
-                            </div>
-                            <div>
-                                <strong>Deadline:</strong>{" "}
-                                <span className="text-yellow-600">
-                                    {new Date(Number(campaign.deadline) * 1000).toLocaleString()}
+                    <>
+                        <div>
+                            <strong>Minimum Goal:</strong>{" "}
+                            <span className="text-green-600">{campaign.minGoal}</span>
+                        </div>
+                        <div>
+                            <strong>Maximum Goal:</strong>{" "}
+                            <span className="text-green-600">{campaign.maxGoal}</span>
+                        </div>
+                        <div>
+                            <strong>Deadline:</strong>{" "}
+                            <span className="text-yellow-600">
+                                {new Date(Number(campaign.deadline) * 1000).toLocaleString()}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Owner:</strong>
+                            <div className="break-all text-gray-600">{campaign.owner}</div>
+                        </div>
+                        <div>
+                            <strong>Status:</strong>
+                            <span className={`font-semibold ml-2 ${campaign.paused === 'true' ? 'text-red-600' : 'text-green-600'}`}>
+                                {campaign.paused === 'true' ? 'Paused' : 'Active'}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Tiers:</strong>
+                            <div className="flex items-center gap-4">
+                                <span className="block text-gray-600">
+                                    {Array.isArray(campaign.tiers) && campaign.tiers.length > 0 ? (
+                                        <ul className="list-disc ml-5">
+                                            {campaign.tiers.map((tier: any, idx: number) => (
+                                                <li key={idx}>
+                                                    <span className="font-semibold">{tier.name}</span> - {tier.amount} ({tier.backers} backers)
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <span>No tiers available.</span>
+                                    )}
                                 </span>
+                                <button
+                                    className="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                                    onClick={() => setShowAddTierForm(true)}
+                                    type="button"
+                                >
+                                    Add Tier
+                                </button>
+                                {showAddTierForm && (
+                                    <Dialog open={showAddTierForm} onOpenChange={setShowAddTierForm}>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Add Tier</DialogTitle>
+                                                <DialogDescription>
+                                                    Add a new tier to this campaign.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <form className="flex flex-col gap-2" onSubmit={handleSubmit} >
+                                                <div>
+                                                    <label className="block text-sm font-medium mb-1">Tier Name</label>
+                                                    <input
+                                                        name="name"
+                                                        type="text"
+                                                        className="w-full border rounded px-2 py-1"
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium mb-1">Amount</label>
+                                                    <input
+                                                        name="amount"
+                                                        type="number"
+                                                        min="1"
+                                                        onChange={handleChange}
+                                                        className="w-full border rounded px-2 py-1"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="flex gap-2 mt-2">
+                                                    <button
+                                                        type="submit"
+                                                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500 transition"
+                                                        onClick={() => setShowAddTierForm(false)}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <span className="text-sm text-gray-500">
+                                                        {progress}
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </DialogContent>
+                                    </Dialog>
+                                )}
                             </div>
-                            <div>
-                                <strong>Owner:</strong>
-                                <div className="break-all text-gray-600">{campaign.owner}</div>
-                            </div>
-                            <div>
-                                <strong>Status:</strong>
-                                <span className={`font-semibold ml-2 ${campaign.paused === 'true' ? 'text-red-600' : 'text-green-600'}`}>
-                                    {campaign.paused === 'true' ? 'Paused' : 'Active'}
-                                </span>
-                            </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </>
+                            
                 )}
             </div>
         </>
