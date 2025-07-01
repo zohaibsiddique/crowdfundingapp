@@ -46,7 +46,9 @@ const CampaignPage = () => {
                 const owner = await crowdfundingContract.owner();
                 const paused = await crowdfundingContract.paused();
                 const tiers = await crowdfundingContract.getTiers();
-                const formattedTiers = tiers.map((tier: any) => ({
+                const state = await crowdfundingContract.state();
+                const formattedTiers = tiers.map((tier: any, idx: number) => ({
+                    index: idx,
                     name: tier.name.toString(),
                     amount: tier.amount.toString(),
                     backers: tier.backers.toString(),
@@ -59,6 +61,7 @@ const CampaignPage = () => {
                     deadline: deadline.toString(),
                     owner: owner.toString(),
                     paused: paused.toString(),
+                    state: state.toString(),
                     tiers: formattedTiers,
                 };
                 // Set the campaign state with the fetched data
@@ -105,6 +108,24 @@ const CampaignPage = () => {
         };
       };
 
+    const fund = async (tierIndex: number) => {
+        if (!campaignAddress || !Array.isArray(campaign.tiers)) return;
+        try {
+            setProgress({ message: "Connecting to contract...", index: tierIndex });
+            const contract = await connectCrowdfundingContract(campaignAddress);
+            const tier = campaign.tiers[tierIndex];
+            if (!tier) throw new Error("Tier not found");
+            setProgress({ message: "Sending funds...", index: tierIndex });
+            const tx = await contract.fund(tierIndex, { value: tier.amount });
+            await tx.wait();
+            setProgress({ message: "Funded successfully!", index: tierIndex });
+            setTimeout(() => setProgress(""), 1500);
+        } catch (error: any) {
+            setProgress({ message: `Error: ${error.message || "Failed to fund."}`, index: tierIndex });
+            setTimeout(() => setProgress(""), 2500);
+        }
+    };
+
     return (
         <>
             <NavBarCampaigns />
@@ -143,14 +164,44 @@ const CampaignPage = () => {
                             </span>
                         </div>
                         <div>
+                            <strong>Campaign State:{campaign.state}</strong>
+                            <span className="ml-2 font-semibold">
+                                {(() => {
+                                    switch (campaign.state) {
+                                        case "0":
+                                        case 0:
+                                            return "Active";
+                                        case "1":
+                                        case 1:
+                                            return "Successful";
+                                        case "2":
+                                        case 2:
+                                            return "Failed";
+                                        default:
+                                            return "Unknown";
+                                    }
+                                })()}
+                            </span>
+                        </div>
+                        <div>
                             <strong>Tiers:</strong>
                             <div className="flex items-center gap-4">
                                 <span className="block text-gray-600">
                                     {Array.isArray(campaign.tiers) && campaign.tiers.length > 0 ? (
                                         <ul className="list-disc ml-5">
                                             {campaign.tiers.map((tier: any, idx: number) => (
-                                                <li key={idx}>
+                                                <li key={idx} className="mb-2 flex items-center">
                                                     <span className="font-semibold">{tier.name}</span> - {tier.amount} ({tier.backers} backers)
+                                                    <button
+                                                        className="ml-2 p-2 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                                                        onClick={() => fund(tier.index)}
+                                                        type="button"
+                                                    >
+                                                        Select
+                                                    </button>
+                                                    {progress && progress.index === tier.index && (
+                                                        <span className="ml-2 text-xs text-gray-500">{progress.message}</span>
+                                                    )}
                                                 </li>
                                             ))}
                                         </ul>
