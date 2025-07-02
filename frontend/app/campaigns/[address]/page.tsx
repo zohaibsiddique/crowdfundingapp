@@ -1,6 +1,7 @@
 'use client'
 import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdfunding-contract';
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
+import TiersSection from '@/components/tiers-section';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
@@ -166,111 +167,19 @@ const CampaignPage = () => {
                         <div>
                             <strong>Campaign State:{campaign.state}</strong>
                             <span className="ml-2 font-semibold">
-                                {(() => {
-                                    switch (campaign.state) {
-                                        case "0":
-                                        case 0:
-                                            return "Active";
-                                        case "1":
-                                        case 1:
-                                            return "Successful";
-                                        case "2":
-                                        case 2:
-                                            return "Failed";
-                                        default:
-                                            return "Unknown";
-                                    }
-                                })()}
+                                {["Active", "Successful", "Failed"][Number(campaign.state)] ?? "Unknown"}
                             </span>
                         </div>
-                        <div>
-                            <strong>Tiers:</strong>
-                            <div className="flex items-center gap-4">
-                                <span className="block text-gray-600">
-                                    {Array.isArray(campaign.tiers) && campaign.tiers.length > 0 ? (
-                                        <ul className="list-disc ml-5">
-                                            {campaign.tiers.map((tier: any, idx: number) => (
-                                                <li key={idx} className="mb-2 flex items-center">
-                                                    <span className="font-semibold">{tier.name}</span> - {tier.amount} ({tier.backers} backers)
-                                                    <button
-                                                        className="ml-2 p-2 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-                                                        onClick={() => fund(tier.index)}
-                                                        type="button"
-                                                    >
-                                                        Select
-                                                    </button>
-                                                    {progress && progress.index === tier.index && (
-                                                        <span className="ml-2 text-xs text-gray-500">{progress.message}</span>
-                                                    )}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <span>No tiers available.</span>
-                                    )}
-                                </span>
-                                <button
-                                    className="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                                    onClick={() => setShowAddTierForm(true)}
-                                    type="button"
-                                >
-                                    Add Tier
-                                </button>
-                                {showAddTierForm && (
-                                    <Dialog open={showAddTierForm} onOpenChange={setShowAddTierForm}>
-                                        <DialogContent>
-                                            <DialogHeader>
-                                                <DialogTitle>Add Tier</DialogTitle>
-                                                <DialogDescription>
-                                                    Add a new tier to this campaign.
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <form className="flex flex-col gap-2" onSubmit={handleSubmit} >
-                                                <div>
-                                                    <label className="block text-sm font-medium mb-1">Tier Name</label>
-                                                    <input
-                                                        name="name"
-                                                        type="text"
-                                                        className="w-full border rounded px-2 py-1"
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium mb-1">Amount</label>
-                                                    <input
-                                                        name="amount"
-                                                        type="number"
-                                                        min="1"
-                                                        onChange={handleChange}
-                                                        className="w-full border rounded px-2 py-1"
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="flex gap-2 mt-2">
-                                                    <button
-                                                        type="submit"
-                                                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500 transition"
-                                                        onClick={() => setShowAddTierForm(false)}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <span className="text-sm text-gray-500">
-                                                        {progress}
-                                                    </span>
-                                                </div>
-                                            </form>
-                                        </DialogContent>
-                                    </Dialog>
-                                )}
-                            </div>
-                        </div>
+                        <TiersSection
+                            tiers={campaign.tiers || []}
+                            progress={progress}
+                            fund={fund}
+                            showAddTierForm={showAddTierForm}
+                            setShowAddTierForm={setShowAddTierForm}
+                            handleSubmit={handleSubmit}
+                            handleChange={handleChange}
+                            setProgress={setProgress}
+                        />
                     </>
                             
                 )}
