@@ -1,3 +1,4 @@
+'use client';
 
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +12,31 @@ import {
 } from "@/components/ui/tabs";
 import AllCampaigns from '@/components/all-campaigns';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { connectFactoryContract } from '../contract-utils/connect-factory-contract';
+import { Switch } from '@/components/ui/switch';
 
 export default function CampaignsPage() {
+  
+  const [paused, setPaused] = useState<boolean | null>(null);
+
+   useEffect(() => {
+
+      async function checkFactoryPaused() {
+        try {
+         
+          const factoryContract = await connectFactoryContract();
+          const pauseState = await factoryContract.paused()
+          console.log("Facotry pause in useeffect", pauseState);
+          setPaused(pauseState);
+        } catch (error) {
+          console.error('Error checking if factory is paused:', error);
+          setPaused(null);
+        } 
+      }
+      checkFactoryPaused();
+    }, []);
+    
   return (
     <div className="min-h-screen">
       {/* --- Nav bar --- */}
@@ -35,11 +59,39 @@ export default function CampaignsPage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>All Campaigns</CardTitle>
-                      <Button asChild className="text-white bg-green-500">
-                        <Link href="/campaigns/create-campaign" aria-label="Create a new campaign">
+                      <Button
+                        asChild
+                        className="text-white bg-green-500"
+                        disabled={paused === true}>
+                        <Link
+                          href={paused === true ? "#" : "/campaigns/create-campaign"}
+                          aria-label="Create a new campaign"
+                          aria-disabled={paused === true}
+                          style={paused === true ? { pointerEvents: "none", opacity: 0.5 } : {}}
+                        >
                           New Campaign
                         </Link>
                       </Button>
+                      {paused !== null && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">{paused ? "Paused" : "Active"}</span>
+                          <Switch
+                            checked={!paused}
+                            onCheckedChange={async () => {
+                              try {
+                                const factoryContract = await connectFactoryContract();
+                                await factoryContract.togglePause();
+                                const pauseState = await factoryContract.paused()
+                                console.log("Facotry pause", pauseState);
+                                setPaused(pauseState);
+                              } catch (error) {
+                                console.error('Error toggling pause state:', error);
+                              }
+                            }}
+                            aria-label="Toggle contract pause"
+                          />
+                        </div>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>

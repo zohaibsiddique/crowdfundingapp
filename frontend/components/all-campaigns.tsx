@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
 import { connectCrowdfundingContract } from "@/app/contract-utils/connect-crowdfunding-contract";
 import { ArrowRightIcon } from "lucide-react";
+import { Switch } from "./ui/switch";
 
 export default function AllCompaigns() {
 

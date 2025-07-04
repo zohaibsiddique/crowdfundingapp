@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import {Crowdfunding} from "./Crowdfunding.sol";
 
+import "hardhat/console.sol";
+
 contract CrowdfundingFactory {
     address public owner;
     bool public paused;
