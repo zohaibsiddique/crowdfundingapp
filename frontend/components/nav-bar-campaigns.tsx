@@ -3,57 +3,50 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { connectWallet } from "../app/contract-utils/connect-wallet"
-import { useEffect, useState } from "react";
-import { Wallet } from "lucide-react";
+import { connectWallet } from "../app/contract-utils/connect-wallet";
+import { useEffect } from "react";
+import { useWallet } from "./wallet-provider";
 
 export default function NavBarCompaigns() {
+  const { wallet, setWallet } = useWallet();
 
   useEffect(() => {
-
-    // Add event listeners for MetaMask account and chain changes
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", () => handleDisconnect());
       window.ethereum.on("chainChanged", () => window.location.reload());
     }
 
-    // Check if wallet was connected in previous session
-    const wasConnected = localStorage.getItem("walletConnected");
-    if (wasConnected === "true") {
-      connectWallet().then((wallet) => {
-        if (wallet) setWallet(wallet);
-      });
-    }
-
+    handleConnect();
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener("accountsChanged", handleDisconnect);
+        window.ethereum.removeListener("chainChanged", () => window.location.reload());
+      }
+    };
   }, []);
 
-
-  const [wallet, setWallet] = useState<{
-    provider: any;
-    signer: any;
-    address: string;
-  } | null>(null);
-
   const handleConnect = async () => {
-    const result = await connectWallet();
-    if (result) setWallet(result);
+   connectWallet().then((wallet) => {
+        if (wallet) setWallet(wallet);
+      });
   };
 
   const handleDisconnect = async () => {
-    setWallet(null); // clear state
-    localStorage.removeItem("walletConnected"); // clear session
+    setWallet(null);
+    if (window.ethereum) {
+        window.ethereum.removeListener("accountsChanged", handleDisconnect);
+        window.ethereum.removeListener("chainChanged", () => window.location.reload());
+      }
   };
-
 
   return (
     <header className="border-b py-4 px-6">
-      <nav className="flex items-center justify-between max-w-7xl mx-auto" aria-label="Compaign Navigation">
-        {/* Logo */}
+      <nav className="flex items-center justify-between max-w-7xl mx-auto" aria-label="Campaign Navigation">
         <Link href="/" aria-label="Go to homepage">
           <div className="flex items-center space-x-2">
             <Image
               src="/baig.webp"
-              alt="FundBase - Community Crowdfunding Logo"
+              alt="FundBase Logo"
               width={48}
               height={48}
               className="rounded-full"
@@ -63,24 +56,19 @@ export default function NavBarCompaigns() {
           </div>
         </Link>
 
-        {/* Button */}
-        <div className="flex flex-row items-center space-x-4 ">
-            <Link href="/campaigns" className="font-semibold transition-colors duration-200 hover:bg-gray-100 px-2 py-1 rounded">
-              Campaigns
-            </Link>
+        <div className="flex flex-row items-center space-x-4">
+          <Link href="/campaigns" className="font-semibold hover:bg-gray-100 px-2 py-1 rounded">
+            All Campaigns
+          </Link>
           {wallet ? (
             <>
               <span>{wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}</span>
-              <Button variant="outline" className="hover:cursor-pointer" onClick={handleDisconnect}>
+              <Button variant="outline" onClick={handleDisconnect}>
                 Disconnect
               </Button>
             </>
           ) : (
-            <Button
-              className="text-white ml-4 bg-blue-500 hover:cursor-pointer"
-              onMouseEnter={e => (e.currentTarget.style.cursor = "pointer")}
-              onClick={handleConnect}
-            >
+            <Button className="bg-blue-500 text-white ml-4" onClick={handleConnect}>
               Connect Wallet
             </Button>
           )}

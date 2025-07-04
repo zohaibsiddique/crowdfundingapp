@@ -5,19 +5,23 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
 import { ArrowRightIcon } from "lucide-react";
+import { useWallet } from "./wallet-provider";
 
-export default function AllCompaigns() {
+export default function MyCompaigns() {
 
+  
+  const { wallet } = useWallet();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
+    if (!wallet) return;
     const fetchCampaigns = async () => {
       try {
         setLoading(true);
         setCampaigns([]); // Reset campaigns before fetching
         const factoryContract = await connectFactoryContract();
-        const allCampaigns = await factoryContract.getAllCampaigns();
+        const allCampaigns = await factoryContract.getUserCampaigns(wallet?.address || "");
         setCampaigns(allCampaigns);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
@@ -27,7 +31,7 @@ export default function AllCompaigns() {
     };
 
     fetchCampaigns();
-  }, []);
+  }, [wallet]);
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

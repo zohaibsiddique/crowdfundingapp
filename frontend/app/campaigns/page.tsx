@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { connectFactoryContract } from '../contract-utils/connect-factory-contract';
 import { Switch } from '@/components/ui/switch';
+import MyCompaigns from '@/components/my-campaigns';
 
 export default function CampaignsPage() {
   
@@ -113,7 +114,7 @@ export default function CampaignsPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <AllCampaigns/>
+                    <MyCompaigns/>
                   </CardContent>
                 </Card>
               </TabsContent>

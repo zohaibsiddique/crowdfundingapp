@@ -15,5 +15,8 @@ export const connectFactoryContract = async () => {
     await signer
   );
 
+  const paused = await contract.paused();
+  console.log("Paused status:", paused);
+
   return contract;
 };
