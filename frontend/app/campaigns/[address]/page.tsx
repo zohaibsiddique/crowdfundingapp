@@ -2,8 +2,6 @@
 import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdfunding-contract';
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import TiersSection from '@/components/tiers-section';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -19,25 +17,34 @@ const CampaignPage = () => {
     const [loading, setLoading] = useState(true);
     const [showAddTierForm, setShowAddTierForm] = useState(false);
     const [progress, setProgress] = useState<string>("");
+
     const [form, setForm] = useState({
-        _name: "",
-        _description: "",
-        _minGoal: "",
-        _maxGoal: "",
-        _durationInDays: "",
+        name: "",
+        amount: "",
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
+    const [contract, setContract] = useState(null);
+
     useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        const crowdfundingContract = await connectCrowdfundingContract(campaignAddress);
+        setContract(crowdfundingContract);
+        
         const fetchCampaign = async () => {
             try {
                 setLoading(true);
                 setCampaign({}); // Reset campaign before fetching
-                
-                const crowdfundingContract = await connectCrowdfundingContract(campaignAddress);
 
                 const name = await crowdfundingContract.name();
                 const description = await crowdfundingContract.description();
@@ -76,7 +83,7 @@ const CampaignPage = () => {
         };
 
         fetchCampaign();
-    }, []);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -85,19 +92,24 @@ const CampaignPage = () => {
         setProgress("Connecting to contract...");
     
         try {
-          const contract = await connectCrowdfundingContract(campaignAddress);
           if (!isMounted) return;
     
           setProgress("Adding Tier...");
-          await contract.addTier(
+
+          if (!contract) throw new Error("Contract not connected");
+          const tx = await contract.addTier(
             form.name,
             form.amount,
           );
+          await tx.wait(); // wait for tx to confirm
+
           if (!isMounted) return;
     
           setProgress("Tier added successfully!");
           setShowAddTierForm(false)
           setTimeout(() => setProgress(""), 1500); // Auto close dialog after success
+
+          fetchData(); // Refresh campaign data after adding tier
         } catch (error: any) {
           if (!isMounted) return;
           setProgress(`Error: ${error.message || "Failed to add tier."}`);
@@ -113,7 +125,6 @@ const CampaignPage = () => {
         if (!campaignAddress || !Array.isArray(campaign.tiers)) return;
         try {
             setProgress({ message: "Connecting to contract...", index: tierIndex });
-            const contract = await connectCrowdfundingContract(campaignAddress);
             const tier = campaign.tiers[tierIndex];
             if (!tier) throw new Error("Tier not found");
             setProgress({ message: "Sending funds...", index: tierIndex });

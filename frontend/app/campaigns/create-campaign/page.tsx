@@ -37,17 +37,19 @@ export default function CreateCampaignForm() {
     setProgress("Connecting to contract...");
 
     try {
-      const contract = await connectFactoryContract();
+       const { contract } = await connectFactoryContract();
       if (!isMounted) return;
 
       setProgress("Creating campaign...");
-      await contract.createCampaign(
+      const tx = await contract.createCampaign(
         form._name,
         form._description,
         form._minGoal,
         form._maxGoal,
         form._durationInDays
       );
+      await tx.wait(); // wait for transaction to confirm
+      
       if (!isMounted) return;
 
       setProgress("Campaign created successfully!");
