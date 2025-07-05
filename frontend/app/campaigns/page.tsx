@@ -20,23 +20,34 @@ import MyCompaigns from '@/components/my-campaigns';
 export default function CampaignsPage() {
   
   const [paused, setPaused] = useState<boolean | null>(null);
+  const [contract, setContract] = useState(null);
 
    useEffect(() => {
 
-      async function checkFactoryPaused() {
+      const init = async () => {
         try {
-         
-          const factoryContract = await connectFactoryContract();
-          const pauseState = await factoryContract.paused()
-          console.log("Facotry pause in useeffect", pauseState);
-          setPaused(pauseState);
-        } catch (error) {
-          console.error('Error checking if factory is paused:', error);
-          setPaused(null);
-        } 
-      }
-      checkFactoryPaused();
+          const { contract, paused } = await connectFactoryContract();
+          setContract(contract);
+          setPaused(paused);
+        } catch (err) {
+          console.error("Error initializing contract:", err);
+        }
+      };
+      init();
     }, []);
+
+     // Toggle handler
+  const togglePause = async () => {
+    if (!contract) return;
+    try {
+      const tx = await contract.togglePause();
+      await tx.wait(); // wait for tx to confirm
+      const pauseState = await contract.paused();
+      setPaused(pauseState);
+    } catch (err) {
+      console.error("Error toggling pause:", err);
+    }
+  };
     
   return (
     <div className="min-h-screen">
@@ -76,21 +87,7 @@ export default function CampaignsPage() {
                       {paused !== null && (
                         <div className="flex items-center gap-2">
                           <span className="text-sm">{paused ? "Paused" : "Active"}</span>
-                          <Switch
-                            checked={!paused}
-                            onCheckedChange={async () => {
-                              try {
-                                const factoryContract = await connectFactoryContract();
-                                await factoryContract.togglePause();
-                                const pauseState = await factoryContract.paused()
-                                console.log("Facotry pause", pauseState);
-                                setPaused(pauseState);
-                              } catch (error) {
-                                console.error('Error toggling pause state:', error);
-                              }
-                            }}
-                            aria-label="Toggle contract pause"
-                          />
+                          <Switch checked={!paused} onCheckedChange={togglePause} />
                         </div>
                       )}
                     </div>

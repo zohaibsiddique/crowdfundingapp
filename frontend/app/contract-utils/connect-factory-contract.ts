@@ -12,11 +12,16 @@ export const connectFactoryContract = async () => {
   const contract = new ethers.Contract(
     CROWDFUNDING_FACTORY_ADDRESS,
     CROWDFUNDING_FACTORY_ABI,
-    await signer
+    signer
   );
 
   const paused = await contract.paused();
   console.log("Paused status:", paused);
 
-  return contract;
+  const factoryAddress = contract.target;
+  const contractAddress = CROWDFUNDING_FACTORY_ADDRESS;
+
+  const network = await provider.getNetwork();
+
+  return { contract, paused, network, provider, factoryAddress, contractAddress};
 };

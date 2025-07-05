@@ -16,8 +16,8 @@ export default function AllCompaigns() {
       try {
         setLoading(true);
         setCampaigns([]); // Reset campaigns before fetching
-        const factoryContract = await connectFactoryContract();
-        const allCampaigns = await factoryContract.getAllCampaigns();
+         const { contract} = await connectFactoryContract();
+        const allCampaigns = await contract.getAllCampaigns();
         setCampaigns(allCampaigns);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
@@ -27,7 +27,7 @@ export default function AllCompaigns() {
     };
 
     fetchCampaigns();
-  }, []);
+  }, []); 
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
