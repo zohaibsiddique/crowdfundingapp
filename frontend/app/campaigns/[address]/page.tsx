@@ -2,6 +2,7 @@
 import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdfunding-contract';
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import TiersSection from '@/components/tiers-section';
+import { Progress } from '@/components/ui/progress';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -55,6 +56,7 @@ const CampaignPage = () => {
                 const paused = await crowdfundingContract.paused();
                 const tiers = await crowdfundingContract.getTiers();
                 const state = await crowdfundingContract.state();
+                const balance = await crowdfundingContract.getContractBalance();
                 const formattedTiers = tiers.map((tier: any, idx: number) => ({
                     index: idx,
                     name: tier.name.toString(),
@@ -71,6 +73,7 @@ const CampaignPage = () => {
                     paused: paused.toString(),
                     state: state.toString(),
                     tiers: formattedTiers,
+                    balance: balance.toString(),
                 };
                 // Set the campaign state with the fetched data
                 setCampaign(campaign);
@@ -138,6 +141,12 @@ const CampaignPage = () => {
         }
     };
 
+    const getProgress = () => {
+       const progress = (campaign.balance / campaign.maxGoal) * 100;
+       return Math.min(progress, 100); // Ensure it doesn’t exceed 100%
+    };
+
+
     return (
         <>
             <NavBarCampaigns />
@@ -151,6 +160,11 @@ const CampaignPage = () => {
                     <div>Loading campaign data...</div>
                 ) : (
                     <>
+                        <div className="text-xs text-muted-foreground text-right">
+                            {campaign.balance} / {campaign.maxGoal}
+                        </div>
+                        <Progress value={getProgress()} />
+                        
                         <div>
                             <strong>Minimum Goal:</strong>{" "}
                             <span className="text-green-600">{campaign.minGoal}</span>
@@ -158,6 +172,10 @@ const CampaignPage = () => {
                         <div>
                             <strong>Maximum Goal:</strong>{" "}
                             <span className="text-green-600">{campaign.maxGoal}</span>
+                        </div>
+                        <div>
+                            <strong>Balance</strong>{" "}
+                            <span className="text-green-600">{campaign.balance}</span>
                         </div>
                         <div>
                             <strong>Deadline:</strong>{" "}

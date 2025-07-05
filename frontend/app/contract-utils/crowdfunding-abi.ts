@@ -1,5 +1,5 @@
  export const CROWDFUNDING_ABI = 
-  [
+[
     {
       "inputs": [
         {

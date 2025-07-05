@@ -91,6 +91,7 @@ contract Crowdfunding {
     }
 
     function fund(uint256 _tierIndex) public payable campaignOpen notPaused {
+        require(!backers[msg.sender].fundedTiers[_tierIndex], "Already funded this tier.");
         require(_tierIndex < tiers.length, "Invalid tier.");
         require(msg.value == tiers[_tierIndex].amount, "Incorrect amount.");
         require(address(this).balance <= maxGoal, "Campaign has reached its maximum goal.");
