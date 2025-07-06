@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import React from "react";
 import { DialogHeader } from "./ui/dialog";
+import { ConfirmationDialog } from "./confirmation-dialog";
 
 interface Tier {
     id: string;
@@ -24,6 +25,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
     tiers,
     progress,
     fund,
+    removeTier,
     showAddTierForm,
     setShowAddTierForm,
     handleSubmit,
@@ -45,8 +47,10 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                         onClick={() => fund(tier.index)}
                                         type="button"
                                     >
-                                        Select
+                                        Fund
                                     </button>
+                                    <ConfirmationDialog btnTxt="Remove" title="Are you sure?" description="This action is irreversible." waitingMsgContent="Removing tier, please wait..." waitingMsgBtn="Removing"  onConfirm={async () => {await removeTier(tier.index);}}/>
+                                   
                                     {progress && progress.index === tier.index && (
                                         <span className="ml-2 text-xs text-gray-500">{progress.message}</span>
                                     )}

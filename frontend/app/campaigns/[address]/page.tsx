@@ -141,6 +141,23 @@ const CampaignPage = () => {
         }
     };
 
+    const removeTier = async (tierIndex: number) => {
+        if (!campaignAddress || !Array.isArray(campaign.tiers)) return;
+        try {
+            setProgress({ message: "Connecting to contract...", index: tierIndex });
+            const tier = campaign.tiers[tierIndex];
+            if (!tier) throw new Error("Tier not found");
+            setProgress({ message: "Removing Tier", index: tierIndex });
+            const tx = await contract.removeTier(tierIndex);
+            await tx.wait();
+            setProgress({ message: "Tier removed", index: tierIndex });
+            setTimeout(() => setProgress(""), 1500);
+        } catch (error: any) {
+            setProgress({ message: `Error: ${error.message || "Failed to remove Tier."}`, index: tierIndex });
+            setTimeout(() => setProgress(""), 2500);
+        }
+    };
+
     const getProgress = () => {
        const progress = (campaign.balance / campaign.maxGoal) * 100;
        return Math.min(progress, 100); // Ensure it doesn’t exceed 100%
@@ -203,6 +220,7 @@ const CampaignPage = () => {
                             tiers={campaign.tiers || []}
                             progress={progress}
                             fund={fund}
+                            removeTier = {removeTier}
                             showAddTierForm={showAddTierForm}
                             setShowAddTierForm={setShowAddTierForm}
                             handleSubmit={handleSubmit}
