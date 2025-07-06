@@ -3,6 +3,7 @@ import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdf
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import TiersSection from '@/components/tiers-section';
 import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
 import { useWallet } from '@/components/wallet-provider';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,6 +20,7 @@ const CampaignPage = () => {
     const [loading, setLoading] = useState(true);
     const [showAddTierForm, setShowAddTierForm] = useState(false);
     const [progress, setProgress] = useState<string>("");
+    const [paused, setPaused] = useState<boolean | null>(null);
 
     const [form, setForm] = useState({
         name: "",
@@ -196,6 +198,20 @@ const CampaignPage = () => {
             setTimeout(() => setProgress(""), 2500);
         }
     };
+
+    // Toggle handler
+    const togglePause = async () => {
+        if (!contract) return;
+        try {
+            const tx = await contract.togglePause();
+            await tx.wait(); // wait for tx to confirm
+            const pauseState = await contract.paused();
+            setPaused(pauseState);
+        } catch (err) {
+            console.error("Error toggling pause:", err);
+        }
+    };
+
     return (
         <>
             <NavBarCampaigns />
@@ -209,13 +225,20 @@ const CampaignPage = () => {
                     <div>Loading campaign data...</div>
                 ) : (
                     <>  
-                        {campaign.state === "1" && (
+                        {paused !== null && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">{paused ? "Paused" : "Active"}</span>
+                                <Switch checked={!paused} onCheckedChange={togglePause} />
+                            </div>
+                        )}
+
+                        {(campaign.state === "1" || campaign.state === "3") && (
                             <div className="text-right">
                                 <button
-                                    onClick={handleWithdraw}
-                                    className="bg-green-600 hover:bg-green-700 text-white p-2"
+                                onClick={handleWithdraw}
+                                className="bg-green-600 hover:bg-green-700 text-white p-2"
                                 >
-                                    Withdraw
+                                Withdraw
                                 </button>
                                 <span>{progress.message}</span>
                             </div>
@@ -279,6 +302,7 @@ const CampaignPage = () => {
                         </div>
                         <TiersSection
                             tiers={campaign.tiers || []}
+                            state={campaign.state}
                             progress={progress}
                             fund={fund}
                             removeTier = {removeTier}

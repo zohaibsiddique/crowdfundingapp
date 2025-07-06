@@ -12,8 +12,10 @@ interface Tier {
 
 interface TiersSectionProps {
     tiers: Tier[];
+    state: string;
     progress: number;
     fund: number;
+    removeTier: (index: number) => Promise<void>;
     showAddTierForm: boolean;
     setShowAddTierForm: (show: boolean) => void;
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -23,6 +25,7 @@ interface TiersSectionProps {
 
 const TiersSection: React.FC<TiersSectionProps> = ({
     tiers,
+    state, 
     progress,
     fund,
     removeTier,
@@ -42,7 +45,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                             {tiers.map((tier: any, idx: number) => (
                                 <li key={idx} className="mb-2 flex items-center">
                                     <span className="font-semibold">{tier.name}</span> - {tier.amount} ({tier.backers} backers)
-                                    <button
+                                    <button disabled={state !== "0"}
                                         className="ml-2 p-2 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
                                         onClick={() => fund(tier.index)}
                                         type="button"
@@ -61,7 +64,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                         <span>No tiers available.</span>
                     )}
                 </span>
-                <button
+                <button disabled={state !== "0"}
                     className="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                     onClick={() => setShowAddTierForm(true)}
                     type="button"

@@ -12,7 +12,7 @@ contract Crowdfunding {
     address public owner;
     bool public paused;
 
-    enum CampaignState { Active, Successful, Failed }
+    enum CampaignState { Active, Successful, Failed, Funded}
     CampaignState public state;
 
     struct Tier {
@@ -76,14 +76,16 @@ contract Crowdfunding {
             console.log("deadline crossed:", block.timestamp >= deadline);
 
             if (block.timestamp >= deadline) {
-                if (balance >= minGoal && balance <= maxGoal) {
+                if (balance >= maxGoal) {
                     state = CampaignState.Successful;
+                } else if (balance >= minGoal) {
+                    state = CampaignState.Funded;
                 } else {
                     state = CampaignState.Failed;
                 }
             } else {
-                if (balance >= minGoal && balance <= maxGoal) {
-                    state = CampaignState.Successful;
+                if (balance >= minGoal && balance < maxGoal) {
+                    state = CampaignState.Funded;
                 }
             }
             
@@ -117,7 +119,10 @@ contract Crowdfunding {
 
     function withdraw() public onlyOwner {
         checkAndUpdateCampaignState();
-        require(state == CampaignState.Successful, "Campaign not successful.");
+        require(
+            state == CampaignState.Successful || state == CampaignState.Funded,
+            "Campaign not eligible for withdrawal."
+        );
         uint256 balance = address(this).balance;
         console.log("Withdrawing balance:", balance);
         require(balance > 0, "No balance to withdraw");
