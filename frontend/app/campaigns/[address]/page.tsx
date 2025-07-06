@@ -163,7 +163,35 @@ const CampaignPage = () => {
        return Math.min(progress, 100); // Ensure it doesn’t exceed 100%
     };
 
+    const handleWithdraw = async () => {
+        if (!campaignAddress) return;
+        try {
+            setProgress({ message: "Connecting to contract..."});
+            setProgress({ message: "Withdrawing funds..."});
+            const tx = await contract.withdraw();
+            await tx.wait();
+            setProgress({ message: "Withdraw successfully!" });
+            setTimeout(() => setProgress(""), 1500);
+        } catch (error: any) {
+            setProgress({ message: `Error: ${error.message || "Failed to withdraw fund."}` });
+            setTimeout(() => setProgress(""), 2500);
+        }
+    };
 
+    const handleRefund = async () => {
+        if (!campaignAddress) return;
+        try {
+            setProgress({ message: "Connecting to contract..."});
+            setProgress({ message: "Refunding..."});
+            const tx = await contract.refund();
+            await tx.wait();
+            setProgress({ message: "Refund successfull!" });
+            setTimeout(() => setProgress(""), 1500);
+        } catch (error: any) {
+            setProgress({ message: `Error: ${error.message || "Failed to refund fund."}` });
+            setTimeout(() => setProgress(""), 2500);
+        }
+    };
     return (
         <>
             <NavBarCampaigns />
@@ -176,7 +204,31 @@ const CampaignPage = () => {
                 {loading ? (
                     <div>Loading campaign data...</div>
                 ) : (
-                    <>
+                    <>  
+                        {campaign.state === "1" && (
+                            <div className="text-right">
+                                <button
+                                    onClick={handleWithdraw}
+                                    className="bg-green-600 hover:bg-green-700 text-white p-2"
+                                >
+                                    Withdraw
+                                </button>
+                                <span>{progress.message}</span>
+                            </div>
+                        )}
+
+                         {campaign.state === "0" && (
+                            <div className="text-right">
+                                <button
+                                    onClick={handleRefund}
+                                    className="bg-gray-600 hover:bg-gray-700 text-white p-2"
+                                >
+                                    Refund
+                                </button>
+                                <span>{progress.message}</span>
+                            </div>
+                        )}
+
                         <div className="text-xs text-muted-foreground text-right">
                             {campaign.balance} / {campaign.maxGoal}
                         </div>
