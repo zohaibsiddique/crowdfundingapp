@@ -3,6 +3,7 @@ import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdf
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import TiersSection from '@/components/tiers-section';
 import { Progress } from '@/components/ui/progress';
+import { useWallet } from '@/components/wallet-provider';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -33,7 +34,8 @@ const CampaignPage = () => {
     };
 
     const [contract, setContract] = useState(null);
-
+    const { wallet } = useWallet();
+    
     useEffect(() => {
         fetchData();
     }, []);
@@ -63,6 +65,7 @@ const CampaignPage = () => {
                     amount: tier.amount.toString(),
                     backers: tier.backers.toString(),
                 }));
+                const myContributon = await crowdfundingContract.getBackerContribution(wallet.address);
                 const campaign = {
                     name: name.toString(),
                     description: description.toString(),
@@ -74,6 +77,7 @@ const CampaignPage = () => {
                     state: state.toString(),
                     tiers: formattedTiers,
                     balance: balance.toString(),
+                    myContributon: myContributon.toString(),
                 };
                 // Set the campaign state with the fetched data
                 setCampaign(campaign);
@@ -217,7 +221,7 @@ const CampaignPage = () => {
                             </div>
                         )}
 
-                         {campaign.state === "0" && (
+                         {campaign.state === "2" && (
                             <div className="text-right">
                                 <button
                                     onClick={handleRefund}
@@ -234,6 +238,11 @@ const CampaignPage = () => {
                         </div>
                         <Progress value={getProgress()} />
                         
+                        <div>
+                            <strong>My Contribution:</strong>{" "}
+                            <span className="text-green-600">{campaign.myContributon ?? 0 }</span>
+                        </div>
+
                         <div>
                             <strong>Minimum Goal:</strong>{" "}
                             <span className="text-green-600">{campaign.minGoal}</span>
