@@ -21,6 +21,8 @@ const CampaignPage = () => {
     const [showAddTierForm, setShowAddTierForm] = useState(false);
     const [progress, setProgress] = useState<string>("");
     const [paused, setPaused] = useState<boolean | null>(null);
+    const [contract, setContract] = useState(null);
+    const { wallet } = useWallet();
 
     const [form, setForm] = useState({
         name: "",
@@ -35,12 +37,23 @@ const CampaignPage = () => {
         }));
     };
 
-    const [contract, setContract] = useState(null);
-    const { wallet } = useWallet();
-    
+
     useEffect(() => {
-        fetchData();
-    }, []);
+
+        const init = async () => {
+            try {
+                if (wallet && wallet.address) {
+
+                    fetchData();
+                    
+                }
+            } catch (err) {
+                console.error("Error initializing contract:", err);
+            }
+        };
+
+        init();
+    }, [wallet]);
 
     const fetchData = async () => {
         const crowdfundingContract = await connectCrowdfundingContract(campaignAddress);
@@ -212,6 +225,8 @@ const CampaignPage = () => {
         }
     };
 
+    const isOwner = () => wallet.address.toLowerCase() === campaign.owner?.toLowerCase();
+
     return (
         <>
             <NavBarCampaigns />
@@ -225,14 +240,14 @@ const CampaignPage = () => {
                     <div>Loading campaign data...</div>
                 ) : (
                     <>  
-                        {paused !== null && (
+                        {isOwner() && (
                             <div className="flex items-center gap-2">
                                 <span className="text-sm">{paused ? "Paused" : "Active"}</span>
                                 <Switch checked={!paused} onCheckedChange={togglePause} />
                             </div>
                         )}
-
-                        {(campaign.state === "1" || campaign.state === "3") && (
+                                 
+                        {(campaign.state === "1" || campaign.state === "3" && isOwner()) && (
                             <div className="text-right">
                                 <button
                                 onClick={handleWithdraw}
@@ -305,6 +320,7 @@ const CampaignPage = () => {
                             state={campaign.state}
                             progress={progress}
                             fund={fund}
+                            isOwner={isOwner()}
                             removeTier = {removeTier}
                             showAddTierForm={showAddTierForm}
                             setShowAddTierForm={setShowAddTierForm}

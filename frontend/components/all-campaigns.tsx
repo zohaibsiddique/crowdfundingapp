@@ -5,11 +5,14 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
 import { ArrowRightIcon } from "lucide-react";
+import { useWallet } from "./wallet-provider";
 
 export default function AllCompaigns() {
 
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { wallet } = useWallet();
+  const [contract, setContract] = useState(null);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -19,6 +22,7 @@ export default function AllCompaigns() {
          const { contract} = await connectFactoryContract();
         const allCampaigns = await contract.getAllCampaigns();
         setCampaigns(allCampaigns);
+        setContract(contract);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
       } finally {

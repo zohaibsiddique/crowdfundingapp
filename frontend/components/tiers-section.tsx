@@ -15,6 +15,7 @@ interface TiersSectionProps {
     state: string;
     progress: number;
     fund: number;
+    isOwner: boolean;
     removeTier: (index: number) => Promise<void>;
     showAddTierForm: boolean;
     setShowAddTierForm: (show: boolean) => void;
@@ -28,6 +29,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
     state, 
     progress,
     fund,
+    isOwner,
     removeTier,
     showAddTierForm,
     setShowAddTierForm,
@@ -52,8 +54,10 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                     >
                                         Fund
                                     </button>
-                                    <ConfirmationDialog btnTxt="Remove" title="Are you sure?" description="This action is irreversible." waitingMsgContent="Removing tier, please wait..." waitingMsgBtn="Removing"  onConfirm={async () => {await removeTier(tier.index);}}/>
-                                   
+                                    {!isOwner && (
+                                        <ConfirmationDialog btnTxt="Remove" title="Are you sure?" description="This action is irreversible." waitingMsgContent="Removing tier, please wait..." waitingMsgBtn="Removing"  onConfirm={async () => {await removeTier(tier.index);}}/>
+                                    )}
+
                                     {progress && progress.index === tier.index && (
                                         <span className="ml-2 text-xs text-gray-500">{progress.message}</span>
                                     )}
@@ -64,7 +68,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                         <span>No tiers available.</span>
                     )}
                 </span>
-                <button disabled={state !== "0"}
+                <button disabled={state !== "0" || !isOwner}
                     className="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                     onClick={() => setShowAddTierForm(true)}
                     type="button"

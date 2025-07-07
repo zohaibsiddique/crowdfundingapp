@@ -16,17 +16,24 @@ import { useEffect, useState } from 'react';
 import { connectFactoryContract } from '../contract-utils/connect-factory-contract';
 import { Switch } from '@/components/ui/switch';
 import MyCompaigns from '@/components/my-campaigns';
+import { useWallet } from '@/components/wallet-provider';
 
 export default function CampaignsPage() {
   
   const [paused, setPaused] = useState<boolean | null>(null);
   const [contract, setContract] = useState(null);
-
+  const { wallet } = useWallet();
+  const [isOwner, setIsOwner] = useState(false);
+   
    useEffect(() => {
 
       const init = async () => {
         try {
           const { contract, paused } = await connectFactoryContract();
+          const owner = await contract.owner()
+          if (wallet && wallet.address) {
+            setIsOwner(wallet.address && wallet.address.toLowerCase() === owner.toLowerCase());
+          }
           setContract(contract);
           setPaused(paused);
         } catch (err) {
@@ -34,7 +41,7 @@ export default function CampaignsPage() {
         }
       };
       init();
-    }, []);
+    }, [wallet]);
 
      // Toggle handler
   const togglePause = async () => {
@@ -48,7 +55,8 @@ export default function CampaignsPage() {
       console.error("Error toggling pause:", err);
     }
   };
-    
+
+
   return (
     <div className="min-h-screen">
       {/* --- Nav bar --- */}
@@ -84,7 +92,7 @@ export default function CampaignsPage() {
                           New Campaign
                         </Link>
                       </Button>
-                      {paused !== null && (
+                      {(paused !== null && isOwner) && (
                         <div className="flex items-center gap-2">
                           <span className="text-sm">{paused ? "Paused" : "Active"}</span>
                           <Switch checked={!paused} onCheckedChange={togglePause} />
