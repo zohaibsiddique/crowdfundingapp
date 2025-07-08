@@ -2,19 +2,14 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import React from "react";
 import { DialogHeader } from "./ui/dialog";
 import { ConfirmationDialog } from "./confirmation-dialog";
-
-interface Tier {
-    id: string;
-    name: string;
-    amount: number;
-    backers: number;
-}
+import { Progress } from "@/app/utils/interfaces/progress";
+import { Tier } from "@/app/utils/interfaces/tier";
 
 interface TiersSectionProps {
     tiers: Tier[];
     state: string;
-    progress: number;
-    fund: number;
+    progress: Progress | null;
+    fund: (index: number) => void;
     isOwner: boolean;
     removeTier: (index: number) => Promise<void>;
     showAddTierForm: boolean;
@@ -121,7 +116,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                         Cancel
                                     </button>
                                     <span className="text-sm text-gray-500">
-                                        {progress}
+                                        {progress?.message ? progress.message : ""}
                                     </span>
                                 </div>
                             </form>

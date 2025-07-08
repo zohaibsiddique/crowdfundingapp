@@ -2,27 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
 import { ArrowRightIcon } from "lucide-react";
-import { useWallet } from "./wallet-provider";
+import { Campaign } from "@/app/utils/interfaces/campaign";
 
 export default function AllCompaigns() {
 
-  const [campaigns, setCampaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
-  const { wallet } = useWallet();
-  const [contract, setContract] = useState(null);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
         setLoading(true);
         setCampaigns([]); // Reset campaigns before fetching
-         const { contract} = await connectFactoryContract();
+        const { contract} = await connectFactoryContract();
         const allCampaigns = await contract.getAllCampaigns();
         setCampaigns(allCampaigns);
-        setContract(contract);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
       } finally {

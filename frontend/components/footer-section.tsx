@@ -8,7 +8,6 @@ import {
   Instagram,
   Youtube,
   Twitter,
-  MailCheck,
 } from "lucide-react";
 
 export default function FooterSection() {

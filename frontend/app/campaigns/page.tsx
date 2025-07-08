@@ -3,7 +3,6 @@
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import {
   Tabs,
   TabsList,
@@ -17,11 +16,12 @@ import { connectFactoryContract } from '../contract-utils/connect-factory-contra
 import { Switch } from '@/components/ui/switch';
 import MyCompaigns from '@/components/my-campaigns';
 import { useWallet } from '@/components/wallet-provider';
+import { FactoryContract } from '../contract-utils/interfaces/factory-contract';
 
 export default function CampaignsPage() {
   
   const [paused, setPaused] = useState<boolean | null>(null);
-  const [contract, setContract] = useState(null);
+  const [contract, setContract] = useState<FactoryContract | null>(null);
   const { wallet } = useWallet();
   const [isOwner, setIsOwner] = useState(false);
    
@@ -32,9 +32,9 @@ export default function CampaignsPage() {
           const { contract, paused } = await connectFactoryContract();
           const owner = await contract.owner()
           if (wallet && wallet.address) {
-            setIsOwner(wallet.address && wallet.address.toLowerCase() === owner.toLowerCase());
+            setIsOwner(Boolean(wallet.address && wallet.address.toLowerCase() === owner.toLowerCase()));
           }
-          setContract(contract);
+          setContract(contract as unknown as FactoryContract);
           setPaused(paused);
         } catch (err) {
           console.error("Error initializing contract:", err);

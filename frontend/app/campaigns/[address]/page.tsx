@@ -1,5 +1,8 @@
 'use client'
 import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdfunding-contract';
+import { CrowdfundingContract } from '@/app/contract-utils/interfaces/funding-contract';
+import { Campaign } from '@/app/utils/interfaces/campaign';
+import { Tier } from '@/app/utils/interfaces/tier';
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import TiersSection from '@/components/tiers-section';
 import { Progress } from '@/components/ui/progress';
@@ -16,12 +19,12 @@ const CampaignPage = () => {
         return <div>Loading...</div>;
     }
 
-    const [campaign, setCampaign] = useState({});
+    const [campaign, setCampaign] = useState<Campaign | null>(null);
     const [loading, setLoading] = useState(true);
     const [showAddTierForm, setShowAddTierForm] = useState(false);
-    const [progress, setProgress] = useState<string>("");
+    const [progress, setProgress] = useState<string | {message: string, index?: number}>("");
     const [paused, setPaused] = useState<boolean | null>(null);
-    const [contract, setContract] = useState(null);
+    const [contract, setContract] = useState<CrowdfundingContract | null>(null);
     const { wallet } = useWallet();
 
     const [form, setForm] = useState({
@@ -62,7 +65,7 @@ const CampaignPage = () => {
         const fetchCampaign = async () => {
             try {
                 setLoading(true);
-                setCampaign({}); // Reset campaign before fetching
+                setCampaign(null); // Reset campaign before fetching
 
                 const name = await crowdfundingContract.name();
                 const description = await crowdfundingContract.description();
@@ -74,13 +77,13 @@ const CampaignPage = () => {
                 const tiers = await crowdfundingContract.getTiers();
                 const state = await crowdfundingContract.state();
                 const balance = await crowdfundingContract.getContractBalance();
-                const formattedTiers = tiers.map((tier: any, idx: number) => ({
+                const formattedTiers = tiers.map((tier: Tier, idx: number) => ({
                     index: idx,
                     name: tier.name.toString(),
                     amount: tier.amount.toString(),
                     backers: tier.backers.toString(),
                 }));
-                const myContributon = await crowdfundingContract.getBackerContribution(wallet.address);
+                const myContributon = await crowdfundingContract.getBackerContribution(wallet?.address);
                 const campaign = {
                     name: name.toString(),
                     description: description.toString(),
@@ -147,10 +150,10 @@ const CampaignPage = () => {
         if (!campaignAddress || !Array.isArray(campaign.tiers)) return;
         try {
             setProgress({ message: "Connecting to contract...", index: tierIndex });
-            const tier = campaign.tiers[tierIndex];
+            const tier = campaign?.tiers[tierIndex];
             if (!tier) throw new Error("Tier not found");
             setProgress({ message: "Sending funds...", index: tierIndex });
-            const tx = await contract.fund(tierIndex, { value: tier.amount });
+            const tx = await contract?.fund(tierIndex, { value: tier.amount });
             await tx.wait();
             setProgress({ message: "Funded successfully!", index: tierIndex });
             setTimeout(() => setProgress(""), 1500);
