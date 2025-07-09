@@ -114,7 +114,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                         Cancel
                                     </button>
                                     <span className="text-sm text-gray-500">
-                                         {typeof progress !== "string" && progress?.message ? progress.message : ""}
+                                          {typeof progress == "string" ? progress : ""}
                                     </span>
                                 </div>
                             </form>

@@ -46,16 +46,16 @@ const CampaignPage = () => {
 
         const init = async () => {
             try {
-
-                    fetchData();
-                    
-                
+                fetchData();
             } catch (err) {
                 console.error("Error initializing contract:", err);
             }
         };
 
-        init();
+        if (wallet?.address) {
+            init();
+        }
+
     }, [wallet]);
 
     const fetchData = async () => {
@@ -334,8 +334,7 @@ const CampaignPage = () => {
                             handleSubmit={handleSubmit}
                             handleChange={handleChange}
                         />
-                    </>
-                            
+                    </>   
                 )}
             </div>
         </>
