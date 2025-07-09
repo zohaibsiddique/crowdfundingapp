@@ -1,6 +1,6 @@
 'use client'
 import { connectCrowdfundingContract } from '@/app/contract-utils/connect-crowdfunding-contract';
-import { CrowdfundingContract } from '@/app/contract-utils/interfaces/funding-contract';
+import { CrowdfundingContract } from '@/app/contract-utils/interfaces/crowdfunding-contract';
 import { Campaign } from '@/app/utils/interfaces/campaign';
 import { Tier } from '@/app/utils/interfaces/tier';
 import NavBarCampaigns from '@/components/nav-bar-campaigns';
@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { useWallet } from '@/components/wallet-provider';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
 
 const CampaignPage = () => {
     const params = useParams();
@@ -45,11 +46,10 @@ const CampaignPage = () => {
 
         const init = async () => {
             try {
-                if (wallet && wallet.address) {
 
                     fetchData();
                     
-                }
+                
             } catch (err) {
                 console.error("Error initializing contract:", err);
             }
@@ -60,7 +60,8 @@ const CampaignPage = () => {
 
     const fetchData = async () => {
         const crowdfundingContract = await connectCrowdfundingContract(campaignAddress);
-        setContract(crowdfundingContract);
+        console.log(crowdfundingContract)
+        setContract(crowdfundingContract as unknown as CrowdfundingContract);
         
         const fetchCampaign = async () => {
             try {
@@ -96,6 +97,9 @@ const CampaignPage = () => {
                     tiers: formattedTiers,
                     balance: balance.toString(),
                     myContributon: myContributon.toString(),
+                    campaignAddress: campaignAddress, 
+                    creationTime: 0, 
+
                 };
                 // Set the campaign state with the fetched data
                 setCampaign(campaign);
@@ -124,7 +128,7 @@ const CampaignPage = () => {
           if (!contract) throw new Error("Contract not connected");
           const tx = await contract.addTier(
             form.name,
-            form.amount,
+            BigInt(form.amount),
           );
           await tx.wait(); // wait for tx to confirm
 
@@ -147,7 +151,7 @@ const CampaignPage = () => {
       };
 
     const fund = async (tierIndex: number) => {
-        if (!campaignAddress || !Array.isArray(campaign.tiers)) return;
+        if (!campaignAddress || !Array.isArray(campaign?.tiers)) return;
         try {
             setProgress({ message: "Connecting to contract...", index: tierIndex });
             const tier = campaign?.tiers[tierIndex];
@@ -164,13 +168,13 @@ const CampaignPage = () => {
     };
 
     const removeTier = async (tierIndex: number) => {
-        if (!campaignAddress || !Array.isArray(campaign.tiers)) return;
+        if (!campaignAddress || !Array.isArray(campaign?.tiers)) return;
         try {
             setProgress({ message: "Connecting to contract...", index: tierIndex });
             const tier = campaign.tiers[tierIndex];
             if (!tier) throw new Error("Tier not found");
             setProgress({ message: "Removing Tier", index: tierIndex });
-            const tx = await contract.removeTier(tierIndex);
+            const tx = await contract?.removeTier(tierIndex);
             await tx.wait();
             setProgress({ message: "Tier removed", index: tierIndex });
             setTimeout(() => setProgress(""), 1500);
@@ -181,7 +185,7 @@ const CampaignPage = () => {
     };
 
     const getProgress = () => {
-       const progress = (campaign.balance / campaign.maxGoal) * 100;
+      const progress = (Number(campaign?.balance) / Number(campaign?.maxGoal)) * 100;
        return Math.min(progress, 100); // Ensure it doesn’t exceed 100%
     };
 
@@ -190,7 +194,7 @@ const CampaignPage = () => {
         try {
             setProgress({ message: "Connecting to contract..."});
             setProgress({ message: "Withdrawing funds..."});
-            const tx = await contract.withdraw();
+            const tx = await contract?.withdraw();
             await tx.wait();
             setProgress({ message: "Withdraw successfully!" });
             setTimeout(() => setProgress(""), 1500);
@@ -205,7 +209,7 @@ const CampaignPage = () => {
         try {
             setProgress({ message: "Connecting to contract..."});
             setProgress({ message: "Refunding..."});
-            const tx = await contract.refund();
+            const tx = await contract?.refund();
             await tx.wait();
             setProgress({ message: "Refund successfull!" });
             setTimeout(() => setProgress(""), 1500);
@@ -228,7 +232,7 @@ const CampaignPage = () => {
         }
     };
 
-    const isOwner = () => wallet.address.toLowerCase() === campaign.owner?.toLowerCase();
+    const isOwner = () => wallet?.address.toLowerCase() === campaign?.owner?.toLowerCase();
 
     return (
         <>
@@ -250,7 +254,7 @@ const CampaignPage = () => {
                             </div>
                         )}
                                  
-                        {(campaign.state === "1" || campaign.state === "3" && isOwner()) && (
+                        {(campaign?.state === 1 || campaign?.state === 3 && isOwner()) && (
                             <div className="text-right">
                                 <button
                                 onClick={handleWithdraw}
@@ -258,11 +262,11 @@ const CampaignPage = () => {
                                 >
                                 Withdraw
                                 </button>
-                                <span>{progress.message}</span>
+                                <span>{typeof progress === "string"? progress: progress.message}</span>
                             </div>
                         )}
 
-                         {campaign.state === "2" && (
+                         {campaign?.state === 2 && (
                             <div className="text-right">
                                 <button
                                     onClick={handleRefund}
@@ -270,57 +274,57 @@ const CampaignPage = () => {
                                 >
                                     Refund
                                 </button>
-                                <span>{progress.message}</span>
+                                <span>{typeof progress === "string"? progress: progress.message}</span>
                             </div>
                         )}
 
                         <div className="text-xs text-muted-foreground text-right">
-                            {campaign.balance} / {campaign.maxGoal}
+                            {Number(campaign?.balance)} / {Number(campaign?.maxGoal)}
                         </div>
                         <Progress value={getProgress()} />
                         
                         <div>
                             <strong>My Contribution:</strong>{" "}
-                            <span className="text-green-600">{campaign.myContributon ?? 0 }</span>
+                            <span className="text-green-600">{campaign?.myContributon ?? 0 }</span>
                         </div>
 
                         <div>
                             <strong>Minimum Goal:</strong>{" "}
-                            <span className="text-green-600">{campaign.minGoal}</span>
+                            <span className="text-green-600">{campaign?.minGoal.toString()}</span>
                         </div>
                         <div>
                             <strong>Maximum Goal:</strong>{" "}
-                            <span className="text-green-600">{campaign.maxGoal}</span>
+                            <span className="text-green-600">{campaign?.maxGoal.toString()}</span>
                         </div>
                         <div>
                             <strong>Balance</strong>{" "}
-                            <span className="text-green-600">{campaign.balance}</span>
+                            <span className="text-green-600">{campaign?.balance.toString()}</span>
                         </div>
                         <div>
                             <strong>Deadline:</strong>{" "}
                             <span className="text-yellow-600">
-                                {new Date(Number(campaign.deadline) * 1000).toLocaleString()}
+                                {new Date(Number(campaign?.deadline) * 1000).toLocaleString()}
                             </span>
                         </div>
                         <div>
                             <strong>Owner:</strong>
-                            <div className="break-all text-gray-600">{campaign.owner}</div>
+                            <div className="break-all text-gray-600">{campaign?.owner}</div>
                         </div>
                         <div>
                             <strong>Status:</strong>
-                            <span className={`font-semibold ml-2 ${campaign.paused === 'true' ? 'text-red-600' : 'text-green-600'}`}>
-                                {campaign.paused === 'true' ? 'Paused' : 'Active'}
+                            <span className={`font-semibold ml-2 ${campaign?.paused === true ? 'text-red-600' : 'text-green-600'}`}>
+                                {campaign?.paused === true ? 'Paused' : 'Active'}
                             </span>
                         </div>
                         <div>
-                            <strong>Campaign State:{campaign.state}</strong>
+                            <strong>Campaign State:{campaign?.state}</strong>
                             <span className="ml-2 font-semibold">
-                                {["Active", "Successful", "Failed"][Number(campaign.state)] ?? "Unknown"}
+                                {["Active", "Successful", "Failed"][Number(campaign?.state)] ?? "Unknown"}
                             </span>
                         </div>
                         <TiersSection
-                            tiers={campaign.tiers || []}
-                            state={campaign.state}
+                            tiers={campaign?.tiers || []}
+                            state={campaign?.state.toString() || "0"}
                             progress={progress}
                             fund={fund}
                             isOwner={isOwner()}
@@ -329,7 +333,6 @@ const CampaignPage = () => {
                             setShowAddTierForm={setShowAddTierForm}
                             handleSubmit={handleSubmit}
                             handleChange={handleChange}
-                            setProgress={setProgress}
                         />
                     </>
                             

@@ -61,6 +61,8 @@ export default function CreateCampaignForm() {
             _durationInDays: "",
         });
       setTimeout(() => setProgress(""), 1500); // Auto close dialog after success
+      
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       if (!isMounted) return;
       setProgress(`Error: ${error.message || "Failed to create campaign."}`);

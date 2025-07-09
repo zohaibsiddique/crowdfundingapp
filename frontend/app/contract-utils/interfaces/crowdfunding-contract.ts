@@ -1,18 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface CrowdfundingContract {
   name(): Promise<string>;
   description(): Promise<string>;
-  minGoal(): Promise<BigInt>;
-  maxGoal(): Promise<BigInt>;
-  deadline(): Promise<BigInt>;
+  minGoal(): Promise<bigint>;
+  maxGoal(): Promise<bigint>;
+  deadline(): Promise<bigint>;
   owner(): Promise<string>;
   paused(): Promise<boolean>;
   state(): Promise<number>;
-  getTiers(): Promise<Array<{ name: string; amount: BigInt; backers: BigInt }>>;
-  getContractBalance(): Promise<BigInt>;
-  getBackerContribution(address: string): Promise<BigInt>;
-  addTier(name: string, amount: BigInt): Promise<any>;
+  getTiers(): Promise<Array<{ name: string; amount: bigint; backers: bigint }>>;
+  getContractBalance(): Promise<bigint>;
+  getBackerContribution(address: string): Promise<bigint>;
+  addTier(name: string, amount: bigint): Promise<any>;
   removeTier(index: number): Promise<any>;
-  fund(index: number, overrides?: { value: BigInt }): Promise<any>;
+  fund(index: number, overrides?: { value: number }): Promise<any>;
   withdraw(): Promise<any>;
   refund(): Promise<any>;
   hasFundedTier(backer: string, tierIndex: number): Promise<boolean>;

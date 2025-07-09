@@ -1,5 +1,6 @@
 import { BrowserProvider, JsonRpcSigner } from "ethers";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
     ethereum?: any;
@@ -28,6 +29,8 @@ export const connectWallet = async (): Promise<WalletConnection> => {
     localStorage.setItem("walletConnected", "true");
 
     return { provider, signer, address };
+
+    /* eslint-disable @typescript-eslint/no-explicit-any */
   } catch (error: any) {
     // Helpful log for debugging
     console.error("Error connecting wallet:", error);

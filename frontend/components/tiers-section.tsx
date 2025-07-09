@@ -2,13 +2,12 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import React from "react";
 import { DialogHeader } from "./ui/dialog";
 import { ConfirmationDialog } from "./confirmation-dialog";
-import { Progress } from "@/app/utils/interfaces/progress";
 import { Tier } from "@/app/utils/interfaces/tier";
 
 interface TiersSectionProps {
     tiers: Tier[];
     state: string;
-    progress: Progress | null;
+    progress: string | {message: string, index?: number};
     fund: (index: number) => void;
     isOwner: boolean;
     removeTier: (index: number) => Promise<void>;
@@ -16,7 +15,6 @@ interface TiersSectionProps {
     setShowAddTierForm: (show: boolean) => void;
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-    setProgress: (progress: number) => void;
 }
 
 const TiersSection: React.FC<TiersSectionProps> = ({
@@ -30,7 +28,6 @@ const TiersSection: React.FC<TiersSectionProps> = ({
     setShowAddTierForm,
     handleSubmit,
     handleChange,
-    setProgress,
 }) => {
     return (
         <section>
@@ -53,9 +50,10 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                         <ConfirmationDialog btnTxt="Remove" title="Are you sure?" description="This action is irreversible." waitingMsgContent="Removing tier, please wait..." waitingMsgBtn="Removing"  onConfirm={async () => {await removeTier(tier.index);}}/>
                                     )}
 
-                                    {progress && progress.index === tier.index && (
-                                        <span className="ml-2 text-xs text-gray-500">{progress.message}</span>
-                                    )}
+                                    {typeof progress !== "string" &&
+                                        progress.index === tier.index && (
+                                            <span className="ml-2 text-xs text-gray-500">{progress.message}</span>
+                                        )}
                                 </li>
                             ))}
                         </ul>
@@ -116,7 +114,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                         Cancel
                                     </button>
                                     <span className="text-sm text-gray-500">
-                                        {progress?.message ? progress.message : ""}
+                                         {typeof progress !== "string" && progress?.message ? progress.message : ""}
                                     </span>
                                 </div>
                             </form>
