@@ -14,9 +14,16 @@ type WalletConnection = {
 } | null;
 
 export const connectWallet = async (): Promise<WalletConnection> => {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   if (!window.ethereum) {
-    alert("MetaMask not found");
-    return null;
+    if (isMobile) {
+      window.location.href = `https://metamask.app.link/dapp/${window.location.hostname}${window.location.pathname}`;
+      return null;
+    } else {
+      alert("MetaMask not found. Please install it.");
+      return null;
+    }
   }
 
   try {
