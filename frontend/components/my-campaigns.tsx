@@ -5,7 +5,6 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { connectFactoryContract } from "@/app/contract-utils/connect-factory-contract";
 import { ArrowRightIcon } from "lucide-react";
-import { useWallet } from "./wallet-provider";
 import { Campaign } from "@/app/utils/interfaces/campaign";
 import { useAccount } from 'wagmi';
 
