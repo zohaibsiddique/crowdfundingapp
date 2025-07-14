@@ -7,9 +7,9 @@ import NavBarCampaigns from '@/components/nav-bar-campaigns';
 import TiersSection from '@/components/tiers-section';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
-import { useWallet } from '@/components/wallet-provider';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 
 const CampaignPage = () => {
@@ -26,7 +26,7 @@ const CampaignPage = () => {
     const [progress, setProgress] = useState<string | {message: string, index?: number}>("");
     const [paused, setPaused] = useState<boolean | null>(null);
     const [contract, setContract] = useState<CrowdfundingContract | null>(null);
-    const { wallet } = useWallet();
+    const { address, isConnected } = useAccount();
 
     const [form, setForm] = useState({
         name: "",
@@ -52,11 +52,11 @@ const CampaignPage = () => {
             }
         };
 
-        if (wallet?.address) {
+        if (address) {
             init();
         }
 
-    }, [wallet]);
+    }, [address, isConnected]);
 
     const fetchData = async () => {
         const crowdfundingContract = await connectCrowdfundingContract(campaignAddress);
@@ -84,7 +84,7 @@ const CampaignPage = () => {
                     amount: tier.amount.toString(),
                     backers: tier.backers.toString(),
                 }));
-                const myContributon = await crowdfundingContract.getBackerContribution(wallet?.address);
+                const myContributon = await crowdfundingContract.getBackerContribution(address);
                 const campaign = {
                     name: name.toString(),
                     description: description.toString(),
@@ -232,7 +232,7 @@ const CampaignPage = () => {
         }
     };
 
-    const isOwner = () => wallet?.address.toLowerCase() === campaign?.owner?.toLowerCase();
+    const isOwner = () => address?.toLowerCase() === campaign?.owner?.toLowerCase();
 
     return (
         <>

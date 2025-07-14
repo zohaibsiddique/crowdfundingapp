@@ -2,44 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { connectWallet } from "../app/contract-utils/connect-wallet";
-import { useEffect } from "react";
-import { useWallet } from "./wallet-provider";
 import Breadcrumbs from "./breadcrumbs";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function NavBarCompaigns() {
-  const { wallet, setWallet } = useWallet();
-
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", () => handleDisconnect());
-      window.ethereum.on("chainChanged", () => window.location.reload());
-    }
-
-    handleConnect();
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener("accountsChanged", handleDisconnect);
-        window.ethereum.removeListener("chainChanged", () => window.location.reload());
-      }
-    };
-  }, []);
-
-  const handleConnect = async () => {
-   connectWallet().then((wallet) => {
-        if (wallet) setWallet(wallet);
-      });
-  };
-
-  const handleDisconnect = async () => {
-    setWallet(null);
-    if (window.ethereum) {
-        window.ethereum.removeListener("accountsChanged", handleDisconnect);
-        window.ethereum.removeListener("chainChanged", () => window.location.reload());
-      }
-  };
-
   return (
     <>
       <header className="border-b py-4 px-6">
@@ -57,21 +23,7 @@ export default function NavBarCompaigns() {
               <span className="font-bold text-lg text-green-700">FundBase</span>
             </div>
           </Link>
-
-          <div className="flex flex-row items-center space-x-4">
-            {wallet ? (
-              <>
-                <span>{wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}</span>
-                <Button variant="outline" onClick={handleDisconnect}>
-                  Disconnect
-                </Button>
-              </>
-            ) : (
-              <Button className="bg-blue-500 text-white ml-4" onClick={handleConnect}>
-                Connect Wallet
-              </Button>
-            )}
-          </div>
+          <ConnectButton/>
         </nav>
       </header>
       <Breadcrumbs />

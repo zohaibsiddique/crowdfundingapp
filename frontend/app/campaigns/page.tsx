@@ -15,14 +15,14 @@ import { useEffect, useState } from 'react';
 import { connectFactoryContract } from '../contract-utils/connect-factory-contract';
 import { Switch } from '@/components/ui/switch';
 import MyCompaigns from '@/components/my-campaigns';
-import { useWallet } from '@/components/wallet-provider';
 import { FactoryContract } from '../contract-utils/interfaces/factory-contract';
+import { useAccount } from 'wagmi';
 
 export default function CampaignsPage() {
   
   const [paused, setPaused] = useState<boolean | null>(null);
   const [contract, setContract] = useState<FactoryContract | null>(null);
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
   const [isOwner, setIsOwner] = useState(false);
    
    useEffect(() => {
@@ -31,8 +31,8 @@ export default function CampaignsPage() {
         try {
           const { contract, paused } = await connectFactoryContract();
           const owner = await contract.owner()
-          if (wallet && wallet.address) {
-            setIsOwner(Boolean(wallet.address && wallet.address.toLowerCase() === owner.toLowerCase()));
+          if (isConnected && address) {
+            setIsOwner(Boolean(address && address.toLowerCase() === owner.toLowerCase()));
           }
           setContract(contract as unknown as FactoryContract);
           setPaused(paused);
@@ -41,7 +41,7 @@ export default function CampaignsPage() {
         }
       };
       init();
-    }, [wallet]);
+    }, []);
 
      // Toggle handler
   const togglePause = async () => {

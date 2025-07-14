@@ -7,21 +7,22 @@ import { connectFactoryContract } from "@/app/contract-utils/connect-factory-con
 import { ArrowRightIcon } from "lucide-react";
 import { useWallet } from "./wallet-provider";
 import { Campaign } from "@/app/utils/interfaces/campaign";
+import { useAccount } from 'wagmi';
 
 export default function MyCompaigns() {
 
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    if (!wallet) return;
+    if (!isConnected) return;
     const fetchCampaigns = async () => {
       try {
         setLoading(true);
         setCampaigns([]); // Reset campaigns before fetching
-         const { contract} = await connectFactoryContract();
-        const allCampaigns = await contract.getUserCampaigns(wallet?.address || "");
+        const { contract} = await connectFactoryContract();
+        const allCampaigns = await contract.getUserCampaigns(address || "");
         setCampaigns(allCampaigns);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
@@ -31,7 +32,7 @@ export default function MyCompaigns() {
     };
 
     fetchCampaigns();
-  }, [wallet]);
+  }, [address, isConnected]);
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
