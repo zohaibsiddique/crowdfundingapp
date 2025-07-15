@@ -46,7 +46,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                     >
                                         Fund
                                     </button>
-                                    {!isOwner && (
+                                    {isOwner && (
                                         <ConfirmationDialog btnTxt="Remove" title="Are you sure?" description="This action is irreversible." waitingMsgContent="Removing tier, please wait..." waitingMsgBtn="Removing"  onConfirm={async () => {await removeTier(tier.index);}}/>
                                     )}
 
