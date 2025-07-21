@@ -15,8 +15,8 @@ export default function NavBarCompaigns() {
               <Image
                 src="/baig.webp"
                 alt="FundBase Logo"
-                width={48}
-                height={48}
+                width={80}
+                height={80}
                 className="rounded-full"
                 priority
               />
@@ -26,7 +26,6 @@ export default function NavBarCompaigns() {
           <ConnectButton/>
         </nav>
       </header>
-      <Breadcrumbs />
     </>
     
   );

@@ -16,8 +16,8 @@ export default function NavBar() {
             <Image
               src="/baig.webp"
               alt="FundBase - Community Crowdfunding Logo"
-              width={48}
-              height={48}
+              width={80}
+              height={80}
               className="rounded-full"
               priority
             />

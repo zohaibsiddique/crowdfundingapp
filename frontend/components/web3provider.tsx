@@ -6,11 +6,12 @@ import { WagmiProvider } from 'wagmi';
 import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { mainnet, sepolia } from 'wagmi/chains';
+import { localhost } from '@/app/utils/localhost';
 
 const config = getDefaultConfig({
   appName: 'My RainbowKit App',
   projectId: 'YOUR_PROJECT_ID',
-  chains: [mainnet, sepolia],
+  chains: [localhost, mainnet, sepolia],
   ssr: true,
 });
 
