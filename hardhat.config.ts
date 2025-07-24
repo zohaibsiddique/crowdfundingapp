@@ -9,12 +9,12 @@ const config: HardhatUserConfig = {
   sourcify: {
     enabled: true
   },
-  // networks: {
-  //   sepolia: {
-  //     url: ALCHEMY_TESTNET_RPC_URL,
-  //     accounts: [TESTNET_PRIVATE_KEY],
-  //   }
-  // }
+  networks: {
+    sepolia: {
+      url: ALCHEMY_TESTNET_RPC_URL,
+      accounts: [TESTNET_PRIVATE_KEY],
+    }
+  }
 };
 
 export default config;
