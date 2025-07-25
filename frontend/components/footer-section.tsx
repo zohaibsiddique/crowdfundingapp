@@ -12,11 +12,11 @@ import {
 
 export default function FooterSection() {
   return (
-    <footer className="relative bg-black text-white pt-20 pb-6 overflow-hidden">
+    <footer className="relative bg-black text-white pt-20 overflow-hidden">
       {/* Blue Diagonal Top Border */}
-      <div className="absolute top-0 left-0 w-full h-20 bg-blue-500 -skew-y-3 -translate-y-1/2" />
+      <div className="absolute top-0 left-0 w-full h-25 bg-blue-500 -skew-y-3 -translate-y-1/2" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="relative z-10 pt-5  mx-auto px-45 grid grid-cols-1  md:grid-cols-[3fr_1fr_1fr_1fr] gap-10">
         {/* FundBase Brand & Description */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -46,11 +46,6 @@ export default function FooterSection() {
           <ul className="text-sm text-gray-300 space-y-2">
             <li>Home</li>
             <li>Campaign Details</li>
-            <li>Funding Progress</li>
-            <li>Rewards</li>
-            <li>Testimonials</li>
-            <li>Sign In</li>
-            <li>Sign Up</li>
           </ul>
         </div>
 

@@ -38,10 +38,10 @@ export default function SliderSection() {
   const { image, title, subtitle, description } = slides[current];
 
   return (
-    <section className="py-12">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-12 px-25">
+      <div className="">
         <div className="rounded-2xl overflow-hidden relative">
-          <div className="w-full h-80 relative">
+          <div className="w-full h-120 relative">
             <Image
               src={image}
               alt={title}
@@ -59,20 +59,18 @@ export default function SliderSection() {
           </div>
         </div>
 
+        <p className="text-center text-gray-700 mt-4 max-w-xl mx-auto">
+          Amplify your project's reach by harnessing the power of community funding.
+        </p>
         <div className="flex justify-center items-center gap-4 mt-6">
-            
-          <p className="text-center text-gray-700 mt-4 max-w-xl mx-auto">
-            Amplify your project's reach by harnessing the power of community funding.
-          </p>
+          
           <Button variant="outline" size="icon" onClick={prevSlide}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <Button size="icon" className="bg-blue-500 text-white" onClick={nextSlide}>
+          <Button size="icon" variant="outline" className="" onClick={nextSlide}>
             <ArrowRight className="w-5 h-5" />
           </Button>
         </div>
-
-        
       </div>
     </section>
   );

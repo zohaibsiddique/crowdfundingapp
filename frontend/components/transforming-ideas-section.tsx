@@ -44,16 +44,16 @@ export default function TransformingIdeasSection() {
   };
 
   return (
-    <section className="py-12  px-4">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <Button variant="outline" className="rounded-full text-blue-500 border-blue-500">
+    <section className="py-5 px-25">
+      <div className=" mx-auto space-y-6">
+        <h2 className="text-3xl font-bold text-center flex-1 ml-12">
+            Transforming Ideas into Reality
+        </h2>
+        <div className="flex justify-between items-center mx-14">
+          <Button variant="outline" className=" text-green-900 border-green-500">
             Discover Our Platform
           </Button>
-          <h2 className="text-2xl font-bold text-center flex-1 -ml-12">
-            Transforming Ideas into Reality
-          </h2>
-          <Button className="bg-blue-500 text-white rounded-full px-4">
+          <Button className="bg-green-700 hover:bg-green-900 text-white  px-4">
             Start Your Journey <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -74,11 +74,13 @@ export default function TransformingIdeasSection() {
                   alt={slide.title}
                   width={400}
                   height={300}
-                  className="object-cover w-full h-60 rounded-xl"
+                  className="object-cover w-full h-80 rounded-xl"
                 />
-                <div className="absolute bottom-4 left-4 text-white font-semibold text-lg drop-shadow">
-                  {slide.title}
+                <div className="absolute bottom-4 left-4 p-2 bg-white/20 backdrop-blur-sm rounded-lg max-w-md">
+                  <h3 className="text-white font-bold text-lg">{slide.title}</h3>
+                  
                 </div>
+                
               </div>
             ))}
           </div>

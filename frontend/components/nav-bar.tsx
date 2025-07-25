@@ -8,8 +8,8 @@ import Nav from "./nav";
 
 export default function NavBar() {
   return (
-    <header className="border-b py-4 px-6">
-      <nav className="flex items-center justify-between max-w-7xl mx-auto" aria-label="Main Navigation">
+    <header className="border-b py-2 px-6">
+      <nav className="flex items-center px-15 justify-between mx-auto" aria-label="Main Navigation">
         {/* Logo */}
         <Link href="/" aria-label="Go to homepage">
           <div className="flex items-center space-x-2">
@@ -21,13 +21,13 @@ export default function NavBar() {
               className="rounded-full"
               priority
             />
-            <span className="font-bold text-lg text-green-700">FundBase</span>
+            <span className="font-bold text-3xl text-green-700">FundBase</span>
           </div>
         </Link>
 
         {/* CTA Button */}
         <div className="flex flex-row items-center space-x-4 lg:flex-row-reverse">
-          <Button asChild className="text-white ml-4 bg-blue-500">
+          <Button asChild className="text-white ml-4 bg-green-700 hover:bg-green-900">
             <Link href="/campaigns" aria-label="View open fundraising campaigns">
               Fund Now
               <ArrowRight className="ml-2 w-4 h-4" />

@@ -9,7 +9,7 @@ export default function NavBarCompaigns() {
   return (
     <>
       <header className="border-b py-4 px-6">
-        <nav className="flex items-center justify-between max-w-7xl mx-auto" aria-label="Campaign Navigation">
+        <nav className="flex items-center justify-between px-15 mx-auto" aria-label="Campaign Navigation">
           <Link href="/" aria-label="Go to homepage">
             <div className="flex items-center space-x-2">
               <Image

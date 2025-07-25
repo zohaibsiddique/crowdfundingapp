@@ -1,31 +1,42 @@
+import { useState } from "react";
+import { Menu } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
-} from "@radix-ui/react-navigation-menu";
-import { Menu } from "lucide-react";
-import { Sheet, SheetTrigger, SheetContent } from "./ui/sheet";
+} from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Nav() {
+  const [active, setActive] = useState("Home");
+
+  const navItems = ["Home", "Features", "Pricing", "Contact"];
+
   return (
     <>
       {/* Desktop Navigation */}
       <div className="hidden lg:block">
         <NavigationMenu>
           <NavigationMenuList className="md:flex gap-6">
-            <NavigationMenuItem>
-              <NavigationMenuLink className="px-4 py-2">Home</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink className="px-4 py-2">Features</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink className="px-4 py-2">Pricing</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink className="px-4 py-2">Contact</NavigationMenuLink>
-            </NavigationMenuItem>
+            {navItems.map((item) => (
+              <NavigationMenuItem key={item}>
+                <NavigationMenuLink
+                  onClick={() => setActive(item)}
+                  className={`px-4 py-2 rounded-md cursor-pointer ${
+                    active === item
+                      ? "font-bold underline"
+                      : "hover:bg-gray-200"
+                  }`}
+                >
+                  {item}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
           </NavigationMenuList>
         </NavigationMenu>
       </div>
@@ -40,11 +51,20 @@ export default function Nav() {
           </SheetTrigger>
           <SheetContent side="right">
             <div className="flex flex-col space-y-4 mt-10">
-              <a href="#" className="text-lg font-medium text-gray-700">Home</a>
-              <a href="#" className="text-lg font-medium text-gray-700">Features</a>
-              <a href="#" className="text-lg font-medium text-gray-700">Pricing</a>
-              <a href="#" className="text-lg font-medium text-gray-700">Contact</a>
-              <a href="#" className="text-white bg-blue-500 hover:bg-blue-600 ml-4">Contact</a>
+              {navItems.map((item) => (
+                <a
+                  key={item}
+                  href="#"
+                  onClick={() => setActive(item)}
+                  className={`text-lg font-medium px-4 py-2 rounded-md ${
+                    active === item
+                      ? "bg-blue-500 text-white"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {item}
+                </a>
+              ))}
             </div>
           </SheetContent>
         </Sheet>
