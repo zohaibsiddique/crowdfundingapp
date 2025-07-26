@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-
+import { toast } from "sonner"
 
 const CampaignPage = () => {
     const params = useParams();
@@ -134,14 +134,14 @@ const CampaignPage = () => {
 
           if (!isMounted) return;
     
-          setProgress("Tier added successfully!");
+          toast.success("Tier added successfully!")
           setShowAddTierForm(false)
           setTimeout(() => setProgress(""), 1500); // Auto close dialog after success
 
           fetchData(); // Refresh campaign data after adding tier
         } catch (error: any) {
           if (!isMounted) return;
-          setProgress(`Error: ${error.message || "Failed to add tier."}`);
+          toast.error("Failed to add tier.")
           setTimeout(() => setProgress(""), 2500); // Auto close dialog after error
         }
     
@@ -159,10 +159,11 @@ const CampaignPage = () => {
             setProgress({ message: "Sending funds...", index: tierIndex });
             const tx = await contract?.fund(tierIndex, { value: tier.amount });
             await tx.wait();
-            setProgress({ message: "Funded successfully!", index: tierIndex });
+
+            toast.success("Funded successfully!")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            setProgress({ message: `Error: ${error.message || "Failed to fund."}`, index: tierIndex });
+            toast.error("Failed to fund.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -176,10 +177,11 @@ const CampaignPage = () => {
             setProgress({ message: "Removing Tier", index: tierIndex });
             const tx = await contract?.removeTier(tierIndex);
             await tx.wait();
-            setProgress({ message: "Tier removed", index: tierIndex });
+
+            toast.success("Tier removed")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            setProgress({ message: `Error: ${error.message || "Failed to remove Tier."}`, index: tierIndex });
+            toast.error("Failed to remove Tier.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -196,10 +198,11 @@ const CampaignPage = () => {
             setProgress({ message: "Withdrawing funds..."});
             const tx = await contract?.withdraw();
             await tx.wait();
-            setProgress({ message: "Withdraw successfully!" });
+
+            toast.success("Withdraw successfully!")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            setProgress({ message: `Error: ${error.message || "Failed to withdraw fund."}` });
+            toast.error("Failed to withdraw fund.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -211,10 +214,11 @@ const CampaignPage = () => {
             setProgress({ message: "Refunding..."});
             const tx = await contract?.refund();
             await tx.wait();
-            setProgress({ message: "Refund successfull!" });
+
+            toast.success("Refund successfull!")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            setProgress({ message: `Error: ${error.message || "Failed to refund fund."}` });
+            toast.error("Failed to refund fund.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -244,7 +248,7 @@ const CampaignPage = () => {
                         <div className="break-all text-gray-600">{campaign?.description}</div>
                     </div>
                     {isOwner() && (
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2">
                             <span className="text-sm">{paused ? "Paused" : "Active"}</span>
                             <Switch checked={!paused} onCheckedChange={togglePause} />
                         </div>
@@ -287,7 +291,7 @@ const CampaignPage = () => {
                             </div>
 
                             <div className='mt-2'>
-                                <span className='mr-4'>Balance:</span>
+                                <span className='mr-2'>Balance:</span>
                                 <span className="text-green-500 text-lg font-bold">{campaign?.balance.toString()}</span>
                             </div>  
 
@@ -299,11 +303,6 @@ const CampaignPage = () => {
                             {Number(campaign?.balance)} / {Number(campaign?.maxGoal)}
                         </div>
                         <Progress value={getProgress()} />
-                        
-                        <div className='mt-2'>
-                            <span className='mr-2'>My Contribution:</span>
-                            <span className="text-green-600 font-bold">{campaign?.myContributon ?? 0 }</span>
-                        </div>
 
                         <div className='mt-2'>
                             <span className='mr-4'>Minimum Goal:</span>

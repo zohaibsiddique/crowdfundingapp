@@ -83,7 +83,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
 
                             {typeof progress !== "string" && progress.index === tier.index && (
                             <CardContent>
-                                <span className="text-xs text-gray-500">{progress.message}</span>
+                                <span className="text-xs text-blue-500">{progress.message}</span>
                             </CardContent>
                             )}
                         </Card>
