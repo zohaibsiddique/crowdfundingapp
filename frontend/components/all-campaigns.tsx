@@ -86,29 +86,40 @@ export default function AllCompaigns() {
         <Card key={i} className="rounded-2xl shadow-md">
           <CardHeader>
             <CardTitle className="flex justify-between items-start">
-              <span>{campaign.name}</span>
-              <span className="text-xs text-gray-500 ml-2 self-center">
-                {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
-              </span>
+            <span>{campaign.name}</span>
+             <span className="text-xs text-gray-500 self-center">
+              {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
+            </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             
             <p>{campaignDetails[i].description}</p>
             
-            <Progress className="mb-2" value={getProgress(campaignDetails[i])} />
+            <Progress className="mt-2" value={getProgress(campaignDetails[i])} />
 
             {campaign.paused ? (
-              <Button className="w-full bg-blue-500 text-white" disabled>
-              Paused
-              </Button>
+              <>
+                <Button className="w-full bg-blue-500 text-white mt-4" disabled>
+                  Paused
+                </Button>
+                <span className="text-xs text-gray-500 self-center">
+                  {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
+                </span>
+              </>
+              
             ) : (
-              <Button asChild className="w-full bg-blue-500 text-white">
-              <a href={`/campaigns/${campaign.campaignAddress}`}>
-                <span>View Campaign</span>
-                <ArrowRightIcon className="ml-2 h-4 w-4" />
-              </a>
-              </Button>
+              <>
+                <Button asChild className="w-full bg-blue-500 hover:bg-blue-700 text-white mt-4">
+                  <a href={`/campaigns/${campaign.campaignAddress}`}>
+                    <span>View Campaign</span>
+                    <ArrowRightIcon className="ml-2 h-4 w-4" />
+                  </a>
+                  </Button>
+                  <span className="text-xs text-red-500 self-center">
+                    Deadline: {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
+                  </span>
+              </>
             )}
           </CardContent>
         </Card>

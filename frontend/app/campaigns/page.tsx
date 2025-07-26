@@ -72,27 +72,30 @@ export default function CampaignsPage() {
             <TabsContent value="all">
               <Card className='border-none shadow-none'>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-row justify-between">
                     <CardTitle>All Campaigns</CardTitle>
-                    <Button
-                      asChild
-                      className="text-white bg-green-500"
-                      disabled={paused === true}>
-                      <Link
-                        href={paused === true ? "#" : "/campaigns/create-campaign"}
-                        aria-label="Create a new campaign"
-                        aria-disabled={paused === true}
-                        style={paused === true ? { pointerEvents: "none", opacity: 0.5 } : {}}
-                      >
-                        New Campaign
-                      </Link>
-                    </Button>
-                    {(paused !== null && isOwner) && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm">{paused ? "Paused" : "Active"}</span>
-                        <Switch checked={!paused} onCheckedChange={togglePause} />
-                      </div>
-                    )}
+                    <div className='flex gap-6'>
+                       {/* {(paused !== null && isOwner) && ( */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">{paused ? "Paused" : "Active"}</span>
+                          <Switch checked={!paused} onCheckedChange={togglePause} />
+                        </div>
+                      {/* )} */}
+                      <Button
+                        asChild
+                        className="text-white bg-green-500 hover:bg-green-700"
+                        disabled={paused === true}>
+                        <Link
+                          href={paused === true ? "#" : "/campaigns/create-campaign"}
+                          aria-label="Create a new campaign"
+                          aria-disabled={paused === true}
+                          style={paused === true ? { pointerEvents: "none", opacity: 0.5 } : {}}
+                        >
+                          New Campaign
+                        </Link>
+                      </Button>
+                     
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>

@@ -37,7 +37,7 @@ export function ConfirmationDialog({ onConfirm, btnTxt, title, description, wait
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button onClick={() => setOpen(true)} className="bg-red-600 text-white px-4 py-2 rounded">
+        <button onClick={() => setOpen(true)} className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded">
           {btnTxt}
         </button>
       </DialogTrigger>

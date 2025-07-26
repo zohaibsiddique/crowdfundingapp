@@ -237,23 +237,24 @@ const CampaignPage = () => {
     return (
         <>
             <NavBarCampaigns />
-            <div className="max-w-xl mx-auto my-8">
-                <h1 className="text-3xl mb-6 text-gray-800 font-bold">Campaign Details</h1>
-                <div className="mb-4">
-                    <strong>Campaign Address:</strong>
-                    <div className="break-all text-gray-600">{campaignAddress}</div>
+            <div className="max-w-xl mx-auto my-4 ">
+                <div className="flex justify-between">
+                    <div>
+                        <strong>{campaign?.name}</strong>
+                        <div className="break-all text-gray-600">{campaign?.description}</div>
+                    </div>
+                    {isOwner() && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm">{paused ? "Paused" : "Active"}</span>
+                            <Switch checked={!paused} onCheckedChange={togglePause} />
+                        </div>
+                    )}
                 </div>
+               
                 {loading ? (
                     <div>Loading campaign data...</div>
                 ) : (
-                    <>  
-                        {isOwner() && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm">{paused ? "Paused" : "Active"}</span>
-                                <Switch checked={!paused} onCheckedChange={togglePause} />
-                            </div>
-                        )}
-                                 
+                    <>     
                         {(campaign?.state === 1 || campaign?.state === 3 && isOwner()) && (
                             <div className="text-right">
                                 <button
@@ -278,50 +279,49 @@ const CampaignPage = () => {
                             </div>
                         )}
 
+                        
+                        <div className='flex justify-between items-center'>
+                            <div className='mt-4'>
+                                <span>Owner:</span>
+                                <div className="0">{campaign?.owner}</div>
+                            </div>
+
+                            <div className='mt-2'>
+                                <span className='mr-4'>Balance:</span>
+                                <span className="text-green-500 text-lg font-bold">{campaign?.balance.toString()}</span>
+                            </div>  
+
+                        </div>
+                      
+
+                        
                         <div className="text-xs text-muted-foreground text-right">
                             {Number(campaign?.balance)} / {Number(campaign?.maxGoal)}
                         </div>
                         <Progress value={getProgress()} />
                         
-                        <div>
-                            <strong>My Contribution:</strong>{" "}
-                            <span className="text-green-600">{campaign?.myContributon ?? 0 }</span>
+                        <div className='mt-2'>
+                            <span className='mr-2'>My Contribution:</span>
+                            <span className="text-green-600 font-bold">{campaign?.myContributon ?? 0 }</span>
                         </div>
 
-                        <div>
-                            <strong>Minimum Goal:</strong>{" "}
-                            <span className="text-green-600">{campaign?.minGoal.toString()}</span>
+                        <div className='mt-2'>
+                            <span className='mr-4'>Minimum Goal:</span>
+                            <span className="text-orange-400 text-lg font-bold">{campaign?.minGoal.toString()}</span>
                         </div>
-                        <div>
-                            <strong>Maximum Goal:</strong>{" "}
-                            <span className="text-green-600">{campaign?.maxGoal.toString()}</span>
+
+                        <div className='mt-2'>
+                            <span className='mr-4'>Maximum Goal:</span>
+                            <span className="text-blue-500 text-lg font-bold">{campaign?.maxGoal.toString()}</span>
                         </div>
-                        <div>
-                            <strong>Balance</strong>{" "}
-                            <span className="text-green-600">{campaign?.balance.toString()}</span>
-                        </div>
-                        <div>
-                            <strong>Deadline:</strong>{" "}
-                            <span className="text-yellow-600">
+
+                         <div className='mt-2'>
+                            <span className='mr-2'>Deadline:</span>
+                            <span className="text-red-500 font-bold">
                                 {new Date(Number(campaign?.deadline) * 1000).toLocaleString()}
                             </span>
                         </div>
-                        <div>
-                            <strong>Owner:</strong>
-                            <div className="break-all text-gray-600">{campaign?.owner}</div>
-                        </div>
-                        <div>
-                            <strong>Status:</strong>
-                            <span className={`font-semibold ml-2 ${campaign?.paused === true ? 'text-red-600' : 'text-green-600'}`}>
-                                {campaign?.paused === true ? 'Paused' : 'Active'}
-                            </span>
-                        </div>
-                        <div>
-                            <strong>Campaign State:{campaign?.state}</strong>
-                            <span className="ml-2 font-semibold">
-                                {["Active", "Successful", "Failed"][Number(campaign?.state)] ?? "Unknown"}
-                            </span>
-                        </div>
+
                         <TiersSection
                             tiers={campaign?.tiers || []}
                             state={campaign?.state.toString() || "0"}
