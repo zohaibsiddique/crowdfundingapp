@@ -7,7 +7,7 @@ import { Card, CardHeader, CardContent } from "./ui/card";
 
 interface TiersSectionProps {
     tiers: Tier[];
-    state: string;
+    state: number | string;
     progress: string | {message: string, index?: number};
     fund: (index: number) => void;
     isOwner: boolean;

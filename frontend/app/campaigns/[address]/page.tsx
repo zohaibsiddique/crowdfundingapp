@@ -292,7 +292,7 @@ const CampaignPage = () => {
 
                             <div className='mt-2'>
                                 <span className='mr-2'>Balance:</span>
-                                <span className="text-green-500 text-lg font-bold">{campaign?.balance.toString()}</span>
+                                <span className="text-green-500 text-lg font-bold">{campaign?.balance}</span>
                             </div>  
 
                         </div>
@@ -306,12 +306,12 @@ const CampaignPage = () => {
 
                         <div className='mt-2'>
                             <span className='mr-4'>Minimum Goal:</span>
-                            <span className="text-orange-400 text-lg font-bold">{campaign?.minGoal.toString()}</span>
+                            <span className="text-orange-400 text-lg font-bold">{campaign?.minGoal}</span>
                         </div>
 
                         <div className='mt-2'>
                             <span className='mr-4'>Maximum Goal:</span>
-                            <span className="text-blue-500 text-lg font-bold">{campaign?.maxGoal.toString()}</span>
+                            <span className="text-blue-500 text-lg font-bold">{campaign?.maxGoal}</span>
                         </div>
 
                          <div className='mt-2'>
@@ -323,7 +323,7 @@ const CampaignPage = () => {
 
                         <TiersSection
                             tiers={campaign?.tiers || []}
-                            state={campaign?.state.toString() || "0"}
+                            state={campaign?.state?.toString() || "0"}
                             progress={progress}
                             fund={fund}
                             isOwner={isOwner()}
