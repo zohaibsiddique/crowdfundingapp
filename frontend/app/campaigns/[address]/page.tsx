@@ -11,6 +11,8 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from "sonner"
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import CampaignSkeleton from '@/components/campaign-skeleton';
 
 const CampaignPage = () => {
     const params = useParams();
@@ -241,101 +243,91 @@ const CampaignPage = () => {
     return (
         <>
             <NavBarCampaigns />
-            <div className="max-w-xl mx-auto my-4 ">
-                <div className="flex justify-between">
-                    <div>
-                        <strong>{campaign?.name}</strong>
-                        <div className="break-all text-gray-600">{campaign?.description}</div>
+
+            {loading ? (
+                    <CampaignSkeleton/>
+                ) : (
+
+                <div className="max-w-xl mx-auto my-4 ">
+                    <div className="w-fit mx-auto border border-gray-300 rounded-md p-4 my-4 text-center">
+                        <span className="block text-sm text-gray-700">Balance</span>
+                        <span className=" text-lg font-bold">
+                            {campaign?.balance}
+                        </span>
                     </div>
-                    {isOwner() && (
-                        <div className="flex gap-2">
-                            <span className="text-sm">{paused ? "Paused" : "Active"}</span>
-                            <Switch checked={!paused} onCheckedChange={togglePause} />
+                    <div className="flex justify-between">
+                        <div>
+                            <strong>{campaign?.name}</strong>
+                            <div className="break-all text-gray-600">{campaign?.description}</div>
+                        </div>
+                        {isOwner() && (
+                            <div className="flex gap-2">
+                                <span className="text-sm">{paused ? "Paused" : "Active"}</span>
+                                <Switch checked={!paused} onCheckedChange={togglePause} />
+                            </div>
+                        )}
+                    </div>
+
+                    {(campaign?.state === 1 || campaign?.state === 3 && isOwner()) && (
+                        <div className="text-right">
+                            <button
+                            onClick={handleWithdraw}
+                            className="bg-green-600 hover:bg-green-700 text-white p-2"
+                            >
+                            Withdraw
+                            </button>
+                            <span>{typeof progress === "string"? progress: progress.message}</span>
                         </div>
                     )}
+
+                        {campaign?.state === 2 && (
+                        <div className="text-right">
+                            <button
+                                onClick={handleRefund}
+                                className="bg-gray-600 hover:bg-gray-700 text-white p-2"
+                            >
+                                Refund
+                            </button>
+                            <span>{typeof progress === "string"? progress: progress.message}</span>
+                        </div>
+                    )}
+
+                    <div className="text-xs text-muted-foreground text-right">
+                        {Number(campaign?.balance)} / {Number(campaign?.maxGoal)}
+                    </div>
+                    <Progress value={getProgress()} />
+
+                    <div className='mt-2'>
+                        <span className='mr-4'>Minimum Goal:</span>
+                        <span className="">{campaign?.minGoal}</span>
+                    </div>
+
+                    <div className='mt-2'>
+                        <span className='mr-4'>Maximum Goal:</span>
+                        <span className="  ">{campaign?.maxGoal}</span>
+                    </div>
+
+                        <div className='mt-2'>
+                        <span className='mr-2'>Deadline:</span>
+                        <span className="">
+                            {new Date(Number(campaign?.deadline) * 1000).toLocaleString()}
+                        </span>
+                    </div>
+
+                    <TiersSection
+                        tiers={campaign?.tiers || []}
+                        state={campaign?.state?.toString() || "0"}
+                        progress={progress}
+                        fund={fund}
+                        isOwner={isOwner()}
+                        removeTier = {removeTier}
+                        showAddTierForm={showAddTierForm}
+                        setShowAddTierForm={setShowAddTierForm}
+                        handleSubmit={handleSubmit}
+                        handleChange={handleChange}
+                    />
                 </div>
-               
-                {loading ? (
-                    <div>Loading campaign data...</div>
-                ) : (
-                    <>     
-                        {(campaign?.state === 1 || campaign?.state === 3 && isOwner()) && (
-                            <div className="text-right">
-                                <button
-                                onClick={handleWithdraw}
-                                className="bg-green-600 hover:bg-green-700 text-white p-2"
-                                >
-                                Withdraw
-                                </button>
-                                <span>{typeof progress === "string"? progress: progress.message}</span>
-                            </div>
-                        )}
-
-                         {campaign?.state === 2 && (
-                            <div className="text-right">
-                                <button
-                                    onClick={handleRefund}
-                                    className="bg-gray-600 hover:bg-gray-700 text-white p-2"
-                                >
-                                    Refund
-                                </button>
-                                <span>{typeof progress === "string"? progress: progress.message}</span>
-                            </div>
-                        )}
-
-                        
-                        <div className='flex justify-between items-center'>
-                            <div className='mt-4'>
-                                <span>Owner:</span>
-                                <div className="0">{campaign?.owner}</div>
-                            </div>
-
-                            <div className='mt-2'>
-                                <span className='mr-2'>Balance:</span>
-                                <span className="text-green-500 text-lg font-bold">{campaign?.balance}</span>
-                            </div>  
-
-                        </div>
-                      
-
-                        
-                        <div className="text-xs text-muted-foreground text-right">
-                            {Number(campaign?.balance)} / {Number(campaign?.maxGoal)}
-                        </div>
-                        <Progress value={getProgress()} />
-
-                        <div className='mt-2'>
-                            <span className='mr-4'>Minimum Goal:</span>
-                            <span className="text-orange-400 text-lg font-bold">{campaign?.minGoal}</span>
-                        </div>
-
-                        <div className='mt-2'>
-                            <span className='mr-4'>Maximum Goal:</span>
-                            <span className="text-blue-500 text-lg font-bold">{campaign?.maxGoal}</span>
-                        </div>
-
-                         <div className='mt-2'>
-                            <span className='mr-2'>Deadline:</span>
-                            <span className="text-red-500 font-bold">
-                                {new Date(Number(campaign?.deadline) * 1000).toLocaleString()}
-                            </span>
-                        </div>
-
-                        <TiersSection
-                            tiers={campaign?.tiers || []}
-                            state={campaign?.state?.toString() || "0"}
-                            progress={progress}
-                            fund={fund}
-                            isOwner={isOwner()}
-                            removeTier = {removeTier}
-                            showAddTierForm={showAddTierForm}
-                            setShowAddTierForm={setShowAddTierForm}
-                            handleSubmit={handleSubmit}
-                            handleChange={handleChange}
-                        />
-                    </>   
-                )}
-            </div>
+            )}
         </>
         
     );

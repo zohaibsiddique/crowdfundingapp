@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner"
 
 export default function CreateCampaignForm() {
   const [progress, setProgress] = useState<string>("");
@@ -62,7 +63,8 @@ export default function CreateCampaignForm() {
         });
       setTimeout(() => setProgress(""), 1500); // Auto close dialog after success
       
-      /* eslint-disable @typescript-eslint/no-explicit-any */
+      toast.success("Campaign created successfully!");
+    
     } catch (error: any) {
       if (!isMounted) return;
       setProgress(`Error: ${error.message || "Failed to create campaign."}`);
@@ -91,7 +93,7 @@ export default function CreateCampaignForm() {
         </DialogContent>
       </Dialog>
 
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4 max-w-md mx-auto mt-4 p-2 border-2 rounded-2xl">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4 max-w-md mx-auto p-2 border-2 rounded-2xl">
         <h1 className="text-2xl font-bold text-center">Create a New Campaign</h1>
         <div>
           <Label htmlFor="_name" className="mb-2">Campaign Name</Label>

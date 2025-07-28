@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DeleteIcon, TrashIcon } from "lucide-react";
 
 interface ConfirmationDialogProps {
   onConfirm: () => Promise<void>;
@@ -37,9 +38,9 @@ export function ConfirmationDialog({ onConfirm, btnTxt, title, description, wait
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button onClick={() => setOpen(true)} className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded">
+        <TrashIcon onClick={() => setOpen(true)} className="cursor-pointer text-red-600 hover:text-red-800">
           {btnTxt}
-        </button>
+        </TrashIcon>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const slides = [
   {
@@ -51,10 +52,16 @@ export default function TransformingIdeasSection() {
         </h2>
         <div className="flex justify-between items-center mx-14">
           <Button variant="outline" className=" text-green-900 border-green-500">
-            Discover Our Platform
+            <Link href="/campaigns" aria-label="View open fundraising campaigns">
+              Discover Our Platform
+            </Link>
           </Button>
           <Button className="bg-green-700 hover:bg-green-900 text-white  px-4">
-            Start Your Journey <ArrowRight className="ml-2 h-4 w-4" />
+            
+            <Link href="/campaigns" aria-label="View open fundraising campaigns">
+             Start Your Journey 
+            </Link>
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
 

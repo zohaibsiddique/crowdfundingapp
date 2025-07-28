@@ -4,12 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
-import Nav from "./nav";
 
 export default function NavBar() {
   return (
-    <header className="border-b py-2 px-6">
-      <nav className="flex items-center px-15 justify-between mx-auto" aria-label="Main Navigation">
+    <header className="border-b py-2 px-25">
+      <nav className="flex items-center justify-between mx-auto" aria-label="Main Navigation">
         {/* Logo */}
         <Link href="/" aria-label="Go to homepage">
           <div className="flex items-center space-x-2">
@@ -33,7 +32,6 @@ export default function NavBar() {
               <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </Button>
-          <Nav/>
         </div>
       </nav>
     </header>

@@ -15,7 +15,7 @@ import {
 export default function Nav() {
   const [active, setActive] = useState("Home");
 
-  const navItems = ["Home", "Features", "Pricing", "Contact"];
+  const navItems = ["Intro", "About", "Pricing", "Contact"];
 
   return (
     <>
@@ -26,6 +26,7 @@ export default function Nav() {
             {navItems.map((item) => (
               <NavigationMenuItem key={item}>
                 <NavigationMenuLink
+                  href={`#${item.toLowerCase()}`}
                   onClick={() => setActive(item)}
                   className={`px-4 py-2 rounded-md cursor-pointer ${
                     active === item

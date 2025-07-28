@@ -8,7 +8,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 export default function NavBarCompaigns() {
   return (
     <>
-      <header className="border-b py-4 px-15 mx-auto">
+      <header className="border-b py-4 px-25">
         <nav className="flex items-center justify-between " aria-label="Campaign Navigation">
           <Link href="/" aria-label="Go to homepage">
             <div className="flex items-center space-x-2">
@@ -26,6 +26,9 @@ export default function NavBarCompaigns() {
           <ConnectButton/>
         </nav>
       </header>
+      <div className="container py-2 px-25">
+        <Breadcrumbs />
+      </div>
     </>
     
   );

@@ -9,6 +9,7 @@ import { Campaign } from "@/app/utils/interfaces/campaign";
 import { connectCrowdfundingContract } from "@/app/contract-utils/connect-crowdfunding-contract";
 import { ethers } from "ethers";
 import { Progress } from "./ui/progress";
+import CampaignsSkeleton from "./campaigns-skeleton";
 
 export default function AllCompaigns() {
 
@@ -74,58 +75,68 @@ export default function AllCompaigns() {
       return Math.min(progress, 100); // Ensure it doesn’t exceed 100%
   };
 
+  if (loading) {
+    return <CampaignsSkeleton />;
+  }
+
+  if (campaigns.length === 0) {
+    return <p>No campaigns found.</p>;
+  }
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {loading ? (
-      <p>Loading campaigns...</p>
-      ) : campaigns.length === 0 ? (
-      <p>No campaigns found.</p>
-      ) : (
-      campaigns.map((campaign, i) => {
-        return (
-        <Card key={i} className="rounded-2xl shadow-md">
-          <CardHeader>
-            <CardTitle className="flex justify-between items-start">
-            <span>{campaign.name}</span>
-             <span className="text-xs text-gray-500 self-center">
-              {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
-            </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            
-            <p>{campaignDetails[i].description}</p>
-            
-            <Progress className="mt-2" value={getProgress(campaignDetails[i])} />
+      {campaigns.map((campaign, i) => {
+        const details = campaignDetails[i];
+        const creationTime = new Date(Number(campaign.creationTime) * 1000).toLocaleString();
 
-            {campaign.paused ? (
-              <>
-                <Button className="w-full bg-blue-500 text-white mt-4" disabled>
-                  Paused
-                </Button>
+        return (
+          <Card key={i} className="rounded-2xl shadow-md">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-start">
+                <span>{campaign.name}</span>
                 <span className="text-xs text-gray-500 self-center">
-                  {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
+                  {creationTime}
                 </span>
-              </>
-              
-            ) : (
-              <>
-                <Button asChild className="w-full bg-blue-500 hover:bg-blue-700 text-white mt-4">
-                  <a href={`/campaigns/${campaign.campaignAddress}`}>
-                    <span>View Campaign</span>
-                    <ArrowRightIcon className="ml-2 h-4 w-4" />
-                  </a>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>{details.description}</p>
+
+              <Progress className="mt-2" value={getProgress(details)} />
+
+              {campaign.paused ? (
+                <>
+                  <Button
+                    className="w-full bg-blue-500 text-white mt-4"
+                    disabled
+                  >
+                    Paused
                   </Button>
-                  <span className="text-xs text-red-500 self-center">
-                    Deadline: {new Date(Number(campaign.creationTime) * 1000).toLocaleString()}
+                  <span className="text-xs text-gray-500 self-center block mt-1">
+                    {creationTime}
                   </span>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                </>
+              ) : (
+                <>
+                  <span className="text-xs font-bold text-gray-500 block mt-2">
+                    Deadline: {creationTime}
+                  </span>
+                  <Button
+                    asChild
+                    className="w-full bg-blue-500 hover:bg-blue-700 text-white mt-4"
+                  >
+                    <a href={`/campaigns/${campaign.campaignAddress}`}>
+                      <span>View Campaign</span>
+                      <ArrowRightIcon className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
         );
-      })
-      )}
+      })}
     </div>
   );
 }

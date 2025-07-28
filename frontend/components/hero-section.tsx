@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const currencySymbols = [
   { symbol: '$', top: '0%', left: '50%' },
@@ -14,7 +15,7 @@ const currencySymbols = [
 
 export default function HeroSection() {
   return (
-    <section className=" mx-auto flex flex-col lg:flex-row items-center bg-gradient-to-br from-white via-blue-100 to-indigo-100 justify-between py-16 px-25 space-y-15 lg:space-y-0">
+    <section id='intro' className=" mx-auto flex flex-col lg:flex-row items-center bg-gradient-to-br from-white via-blue-100 to-indigo-100 justify-between py-16 px-25 space-y-15 lg:space-y-0">
       <div className="max-w-xl text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
             Empowering{' '}
@@ -28,8 +29,13 @@ export default function HeroSection() {
           </p>
           <div className="mt-6">
             <Button className="text-white bg-blue-500 hover:bg-blue-700">
-              Fund Now and Make an Impact
+              
+              <Link href="/campaigns" aria-label="View open fundraising campaigns">
+                Fund Now and Make an Impact
+              </Link>
+              
               <ArrowRight className="ml-2 w-4 h-4" />
+              
             </Button>
           </div>
         </div>

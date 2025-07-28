@@ -9,6 +9,7 @@ import {
   Youtube,
   Twitter,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function FooterSection() {
   return (
@@ -44,8 +45,11 @@ export default function FooterSection() {
         <div>
           <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
           <ul className="text-sm text-gray-300 space-y-2">
-            <li>Home</li>
-            <li>Campaign Details</li>
+            <li> 
+              <Link href="/campaigns" aria-label="View open fundraising campaigns">
+                Campaigns
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -53,7 +57,11 @@ export default function FooterSection() {
         <div>
           <h3 className="text-lg font-semibold mb-3">FAQs</h3>
           <ul className="text-sm text-gray-300 space-y-2">
-            <li>FAQs</li>
+            <li>
+               <Link href="#faq" aria-label="View open fundraising campaigns">
+                FAQ
+              </Link>
+            </li>
           </ul>
         </div>
 

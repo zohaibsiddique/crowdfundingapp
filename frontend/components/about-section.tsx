@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react"
 
 export default function AboutSection() {
   return (
-    <section className="py-12 px-4 lg:px-25 grid grid-cols-1 md:grid-cols-2 items-center gap-20">
+    <section id="about" className="py-12 px-4 lg:px-25 grid grid-cols-1 md:grid-cols-2 items-center gap-20">
       {/* Left Section */}
       <div>
         <h2 className="text-xl font-bold mb-2 text-black">About FundBase</h2>
@@ -15,11 +15,6 @@ export default function AboutSection() {
         <p className="mt-4 text-gray-600">
           FundBase connects innovative projects with passionate supporters. With transparent goals and secure transactions, we facilitate your journey from concept to reality, ensuring that your vision is backed by those who believe in it.
         </p>
-
-        <Button className="mt-6 text-white bg-blue-500 hover:bg-blue-700">
-          Join Us in Making a Difference
-          <ArrowRight className="ml-2 w-4 h-4" />
-        </Button>
       </div>
 
       {/* Right Section with image and overlay cards */}
