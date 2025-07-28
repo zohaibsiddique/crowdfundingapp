@@ -91,7 +91,7 @@ export default function CreateCampaignForm() {
         </DialogContent>
       </Dialog>
 
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-6 max-w-md mx-auto mt-4 p-2 border-2">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4 max-w-md mx-auto mt-4 p-2 border-2 rounded-2xl">
         <h1 className="text-2xl font-bold text-center">Create a New Campaign</h1>
         <div>
           <Label htmlFor="_name" className="mb-2">Campaign Name</Label>
@@ -143,7 +143,7 @@ export default function CreateCampaignForm() {
             
           />
         </div>
-        <Button type="submit" className="hover:cursor-pointer">Create</Button>
+        <Button type="submit" className="my-3 bg-green-700 hover:bg-green-900">Create</Button>
       </form>
     </>
   );
