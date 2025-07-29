@@ -37,7 +37,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                 <strong><h2 className="text-lg">Tiers</h2></strong>
                  {isOwner && (
                     <Button variant="outline"
-                        disabled={state !== "0" || !isOwner}
+                        disabled={state == "1" || state == "2" || !isOwner}
                         className="px-3 py-1 rounded  transition"
                         onClick={() => setShowAddTierForm(true)}
                         type="button"
@@ -61,7 +61,7 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                     </div>
                                    
                                     <button
-                                        disabled={state !== "0"}
+                                        disabled={state == "1" || state == "2"}
                                         className="p-2 bg-green-500 text-white rounded text-xs hover:bg-green-700"
                                         onClick={() => fund(tier.index)}
                                     >

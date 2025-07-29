@@ -35,7 +35,7 @@ contract Crowdfunding {
     }
 
     modifier campaignOpen() {
-        require(state == CampaignState.Active, "Campaign is not active.");
+        require(state == CampaignState.Active || state == CampaignState.Funded, "Campaign is not active.");
         _;
     }
 
@@ -65,7 +65,7 @@ contract Crowdfunding {
     }
 
     function checkAndUpdateCampaignState() internal {
-        if(state == CampaignState.Active) {
+        if(state == CampaignState.Active || state == CampaignState.Funded) {
             uint256 balance = address(this).balance;
 
             console.log("Current balance:", balance);
@@ -75,20 +75,23 @@ contract Crowdfunding {
             console.log("Deadline:", deadline);
             console.log("deadline crossed:", block.timestamp >= deadline);
 
-            if (block.timestamp >= deadline) {
+           if (block.timestamp >= deadline) {
                 if (balance >= maxGoal) {
                     state = CampaignState.Successful;
-                } else if (balance >= minGoal) {
+                } else if (balance > 0) {
                     state = CampaignState.Funded;
                 } else {
                     state = CampaignState.Failed;
                 }
             } else {
-                if (balance >= minGoal && balance < maxGoal) {
+                if (balance >= maxGoal) {
+                    state = CampaignState.Successful;
+                } else if (balance > 0) {
                     state = CampaignState.Funded;
+                } else {
+                    state = CampaignState.Active;
                 }
             }
-            
         }
     }
 

@@ -16,6 +16,7 @@ import CampaignSkeleton from '@/components/campaign-skeleton';
 import { Anybody } from 'next/font/google';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const CampaignPage = () => {
     const params = useParams();
@@ -187,6 +188,8 @@ const CampaignPage = () => {
 
             toast.success("Tier removed")
             setTimeout(() => setProgress(""), 1500);
+
+            fetchData(); // Refresh campaign data after removing tier
         } catch (error: any) {
             toast.error(error.reason || "Failed to remove Tier.")
             setTimeout(() => setProgress(""), 2500);
@@ -274,6 +277,7 @@ const CampaignPage = () => {
                             {campaign?.balance}
                         </span>
                     </div>
+                   
                     <div className="flex justify-between">
                         <div>
                             <strong>{campaign?.name}</strong>
@@ -286,30 +290,7 @@ const CampaignPage = () => {
                             </div>
                         )}
                     </div>
-
-                    {(campaign?.state === 1 || campaign?.state === 3 && isOwner()) && (
-                        <div className="text-right">
-                            <button
-                            onClick={handleWithdraw}
-                            className="bg-green-600 hover:bg-green-700 text-white p-2"
-                            >
-                            Withdraw
-                            </button>
-                            <span>{typeof progress === "string"? progress: progress}</span>
-                        </div>
-                    )}
-
-                        {campaign?.state === 2 && (
-                        <div className="text-right">
-                            <button
-                                onClick={handleRefund}
-                                className="bg-gray-600 hover:bg-gray-700 text-white p-2"
-                            >
-                                Refund
-                            </button>
-                            <span>{typeof progress === "string"? progress: progress}</span>
-                        </div>
-                    )}
+                    
 
                     <div className="text-xs text-muted-foreground text-right">
                         {Number(campaign?.balance)} / {Number(campaign?.maxGoal)}
@@ -332,6 +313,30 @@ const CampaignPage = () => {
                             {new Date(Number(campaign?.deadline) * 1000).toLocaleString()}
                         </span>
                     </div>
+
+                     {/* withdraw buttons */}
+                    {isOwner() && (campaign?.state == 1 || campaign?.state == 3) && (
+                        <div className="text-right">
+                            <Button
+                                onClick={handleWithdraw}
+                                className=" bg-green-500 hover:bg-green-700 text-white p-2"
+                            >
+                            Withdraw
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Refund */}
+                    {campaign?.state == 2 && (
+                        <div className="text-right">
+                            <Button
+                                onClick={handleRefund}
+                                className="bg-gray-500 hover:bg-gray-700 text-white p-2"
+                            >
+                                Refund
+                            </Button>
+                        </div>
+                    )}
 
                     <TiersSection
                         tiers={campaign?.tiers || []}
