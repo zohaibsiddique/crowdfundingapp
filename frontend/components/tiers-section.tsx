@@ -86,12 +86,6 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                                 </div>
                                
                             </CardHeader>
-
-                            {typeof progress !== "string" && progress.index === tier.index && (
-                            <CardContent>
-                                <span className="text-xs text-blue-500">{progress.message}</span>
-                            </CardContent>
-                            )}
                         </Card>
                     ))
                 ) : (
@@ -144,9 +138,6 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                             Cancel
                             </button>
                         </div>
-                        <span className="text-sm text-gray-500">
-                            {typeof progress === "string" ? progress : ""}
-                        </span>
                         </form>
                     </DialogContent>
                     </Dialog>

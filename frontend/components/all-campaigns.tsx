@@ -7,9 +7,9 @@ import { connectFactoryContract } from "@/app/contract-utils/connect-factory-con
 import { ArrowRightIcon } from "lucide-react";
 import { Campaign } from "@/app/utils/interfaces/campaign";
 import { connectCrowdfundingContract } from "@/app/contract-utils/connect-crowdfunding-contract";
-import { ethers } from "ethers";
 import { Progress } from "./ui/progress";
 import CampaignsSkeleton from "./campaigns-skeleton";
+import EmptyCampaignsMsg from "./empty-campaigns-msg";
 
 export default function AllCompaigns() {
 
@@ -80,7 +80,7 @@ export default function AllCompaigns() {
   }
 
   if (campaigns.length === 0) {
-    return <p>No campaigns found.</p>;
+    return <EmptyCampaignsMsg />;
   }
 
   return (
@@ -103,7 +103,10 @@ export default function AllCompaigns() {
             <CardContent>
               <p>{details.description}</p>
 
-              <Progress className="mt-2" value={getProgress(details)} />
+              <div className="text-xs text-muted-foreground text-right">
+                  {Number(details.balance)} / {Number(details.maxGoal)}
+              </div>
+              <Progress className="mt-1" value={getProgress(details)} />
 
               {campaign.paused ? (
                 <>
@@ -124,7 +127,8 @@ export default function AllCompaigns() {
                   </span>
                   <Button
                     asChild
-                    className="w-full bg-blue-500 hover:bg-blue-700 text-white mt-4"
+                    variant="outline"
+                    className="w-full  mt-4"
                   >
                     <a href={`/campaigns/${campaign.campaignAddress}`}>
                       <span>View Campaign</span>

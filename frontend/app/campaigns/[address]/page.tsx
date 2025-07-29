@@ -13,6 +13,9 @@ import { useAccount } from 'wagmi';
 import { toast } from "sonner"
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import CampaignSkeleton from '@/components/campaign-skeleton';
+import { Anybody } from 'next/font/google';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader2 } from 'lucide-react';
 
 const CampaignPage = () => {
     const params = useParams();
@@ -25,7 +28,7 @@ const CampaignPage = () => {
     const [campaign, setCampaign] = useState<Campaign | null>(null);
     const [loading, setLoading] = useState(true);
     const [showAddTierForm, setShowAddTierForm] = useState(false);
-    const [progress, setProgress] = useState<string | {message: string, index?: number}>("");
+    const [progress, setProgress] = useState<string>("");
     const [paused, setPaused] = useState<boolean | null>(null);
     const [contract, setContract] = useState<CrowdfundingContract | null>(null);
     const { address, isConnected } = useAccount();
@@ -143,7 +146,7 @@ const CampaignPage = () => {
           fetchData(); // Refresh campaign data after adding tier
         } catch (error: any) {
           if (!isMounted) return;
-          toast.error("Failed to add tier.")
+          toast.error(error.reason || "Failed to add tier.")
           setTimeout(() => setProgress(""), 2500); // Auto close dialog after error
         }
     
@@ -155,17 +158,19 @@ const CampaignPage = () => {
     const fund = async (tierIndex: number) => {
         if (!campaignAddress || !Array.isArray(campaign?.tiers)) return;
         try {
-            setProgress({ message: "Connecting to contract...", index: tierIndex });
+            setProgress("Connecting to contract..." );
             const tier = campaign?.tiers[tierIndex];
             if (!tier) throw new Error("Tier not found");
-            setProgress({ message: "Sending funds...", index: tierIndex });
+            setProgress("Sending funds...");
             const tx = await contract?.fund(tierIndex, { value: tier.amount });
             await tx.wait();
 
             toast.success("Funded successfully!")
             setTimeout(() => setProgress(""), 1500);
+
+            fetchData(); // Refresh campaign data after funding
         } catch (error: any) {
-            toast.error("Failed to fund.")
+            toast.error(error.reason || "Failed to fund tier.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -173,17 +178,17 @@ const CampaignPage = () => {
     const removeTier = async (tierIndex: number) => {
         if (!campaignAddress || !Array.isArray(campaign?.tiers)) return;
         try {
-            setProgress({ message: "Connecting to contract...", index: tierIndex });
+            setProgress("Connecting to contract...");
             const tier = campaign.tiers[tierIndex];
             if (!tier) throw new Error("Tier not found");
-            setProgress({ message: "Removing Tier", index: tierIndex });
+            setProgress("Removing Tier");
             const tx = await contract?.removeTier(tierIndex);
             await tx.wait();
 
             toast.success("Tier removed")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            toast.error("Failed to remove Tier.")
+            toast.error(error.reason || "Failed to remove Tier.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -196,15 +201,15 @@ const CampaignPage = () => {
     const handleWithdraw = async () => {
         if (!campaignAddress) return;
         try {
-            setProgress({ message: "Connecting to contract..."});
-            setProgress({ message: "Withdrawing funds..."});
+            setProgress("Connecting to contract...");
+            setProgress("Withdrawing funds...");
             const tx = await contract?.withdraw();
             await tx.wait();
 
             toast.success("Withdraw successfully!")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            toast.error("Failed to withdraw fund.")
+            toast.error(error.reason || "Failed to withdraw fund.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -212,15 +217,15 @@ const CampaignPage = () => {
     const handleRefund = async () => {
         if (!campaignAddress) return;
         try {
-            setProgress({ message: "Connecting to contract..."});
-            setProgress({ message: "Refunding..."});
+            setProgress("Connecting to contract...");
+            setProgress("Refunding...");
             const tx = await contract?.refund();
             await tx.wait();
 
             toast.success("Refund successfull!")
             setTimeout(() => setProgress(""), 1500);
         } catch (error: any) {
-            toast.error("Failed to refund fund.")
+            toast.error(error.reason || "Failed to refund fund.")
             setTimeout(() => setProgress(""), 2500);
         }
     };
@@ -233,8 +238,8 @@ const CampaignPage = () => {
             await tx.wait(); // wait for tx to confirm
             const pauseState = await contract.paused();
             setPaused(pauseState);
-        } catch (err) {
-            console.error("Error toggling pause:", err);
+        } catch (error: any) {
+            toast.error(error.reason || "Failed to toggle.")
         }
     };
 
@@ -244,6 +249,20 @@ const CampaignPage = () => {
         <>
             <NavBarCampaigns />
 
+            <Dialog open={!!progress} onOpenChange={() => setProgress("")}>
+                <DialogContent className="sm:max-w-md text-center">
+                <DialogHeader>
+                    <DialogTitle>Processing</DialogTitle>
+                </DialogHeader>
+
+                <div className="flex flex-col items-center justify-center gap-4 py-6">
+                    <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+                    <p className="text-sm text-muted-foreground">{progress}</p>
+                </div>
+                </DialogContent>
+            </Dialog>
+
+            
             {loading ? (
                     <CampaignSkeleton/>
                 ) : (
@@ -276,7 +295,7 @@ const CampaignPage = () => {
                             >
                             Withdraw
                             </button>
-                            <span>{typeof progress === "string"? progress: progress.message}</span>
+                            <span>{typeof progress === "string"? progress: progress}</span>
                         </div>
                     )}
 
@@ -288,7 +307,7 @@ const CampaignPage = () => {
                             >
                                 Refund
                             </button>
-                            <span>{typeof progress === "string"? progress: progress.message}</span>
+                            <span>{typeof progress === "string"? progress: progress}</span>
                         </div>
                     )}
 

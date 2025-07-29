@@ -26,9 +26,6 @@ export default function NavBarCompaigns() {
           <ConnectButton/>
         </nav>
       </header>
-      <div className="container py-2 px-25">
-        <Breadcrumbs />
-      </div>
     </>
     
   );
