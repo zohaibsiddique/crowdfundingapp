@@ -12,7 +12,7 @@ const config = getDefaultConfig({
   appName: 'My RainbowKit App',
   projectId: 'YOUR_PROJECT_ID',
   chains: [localhost, mainnet, sepolia],
-  ssr: true,
+  ssr: false,
 });
 
 const queryClient = new QueryClient();
