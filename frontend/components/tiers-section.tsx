@@ -5,6 +5,7 @@ import { ConfirmationDialog } from "./confirmation-dialog";
 import { Tier } from "@/app/utils/interfaces/tier";
 import { Card, CardHeader, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
+import { ethers } from "ethers";
 
 interface TiersSectionProps {
     tiers: Tier[];
@@ -47,14 +48,19 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                 )}
             </div>
             
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+           <div className="grid grid-cols-1 gap-2">
                 {Array.isArray(tiers) && tiers.length > 0 ? (
                     tiers.map((tier: any, idx: number) => (
                         <Card key={idx} className="shadow-md">
                             <CardHeader>
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <h4 className="font-semibold">{tier.name} - {tier.amount}</h4>
+                                        <h4 className="font-semibold">{tier.name}</h4>
+                                         {
+                                            tier.amount
+                                                ? ethers.formatEther(tier.amount) + " ETH"
+                                                : "0 ETH"
+                                        }
                                         <p className="text-sm text-gray-600">
                                             ({tier.backers} backers)
                                         </p>
@@ -113,10 +119,11 @@ const TiersSection: React.FC<TiersSectionProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Amount</label>
+                            <label className="block text-sm font-medium mb-1">Amount (wei)</label>
                             <input
                             name="amount"
                             type="number"
+                            placeholder="e.g. 1 Ether = 1000000000000000000 wei"
                             min="1"
                             onChange={handleChange}
                             className="w-full border rounded px-2 py-1"

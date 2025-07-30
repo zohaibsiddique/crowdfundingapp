@@ -11,6 +11,7 @@ import { Progress } from "./ui/progress";
 import CampaignsSkeleton from "./campaigns-skeleton";
 import EmptyCampaignsMsg from "./empty-campaigns-msg";
 import { useAccount } from "wagmi";
+import { ethers } from "ethers";
 
 export default function AllCompaigns() {
 
@@ -105,7 +106,7 @@ export default function AllCompaigns() {
               <p>{details.description}</p>
 
               <div className="text-xs text-muted-foreground text-right">
-                  {Number(details.balance)} / {Number(details.maxGoal)}
+                {details.balance ? ethers.formatEther(details.balance) : "0"} ETH / {details.maxGoal ? ethers.formatEther(details.maxGoal) : "0"} ETH
               </div>
               <Progress className="mt-1" value={getProgress(details)} />
 

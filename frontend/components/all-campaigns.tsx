@@ -10,6 +10,7 @@ import { connectCrowdfundingContract } from "@/app/contract-utils/connect-crowdf
 import { Progress } from "./ui/progress";
 import CampaignsSkeleton from "./campaigns-skeleton";
 import EmptyCampaignsMsg from "./empty-campaigns-msg";
+import { ethers } from "ethers";
 
 export default function AllCompaigns() {
 
@@ -88,6 +89,7 @@ export default function AllCompaigns() {
       {campaigns.map((campaign, i) => {
         const details = campaignDetails[i];
         const creationTime = new Date(Number(campaign.creationTime) * 1000).toLocaleString();
+        const deadline = new Date(Number(details.deadline) * 1000).toLocaleString();
 
         return (
           <Card key={i} className="rounded-2xl shadow-md">
@@ -104,7 +106,7 @@ export default function AllCompaigns() {
               <p>{details.description}</p>
 
               <div className="text-xs text-muted-foreground text-right">
-                  {Number(details.balance)} / {Number(details.maxGoal)}
+                {details.balance ? ethers.formatEther(details.balance) : "0"} ETH / {details.maxGoal ? ethers.formatEther(details.maxGoal) : "0"} ETH
               </div>
               <Progress className="mt-1" value={getProgress(details)} />
 
@@ -123,7 +125,7 @@ export default function AllCompaigns() {
               ) : (
                 <>
                   <span className="text-xs font-bold text-gray-500 block mt-2">
-                    Deadline: {creationTime}
+                    Deadline: {deadline }
                   </span>
                   <Button
                     asChild

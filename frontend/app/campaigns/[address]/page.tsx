@@ -17,6 +17,7 @@ import { Anybody } from 'next/font/google';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ethers } from 'ethers';
 
 const CampaignPage = () => {
     const params = useParams();
@@ -271,10 +272,48 @@ const CampaignPage = () => {
                 ) : (
 
                 <div className="max-w-xl mx-auto my-4 ">
+                    
+                    {isOwner() && (campaign?.state == 1 || campaign?.state == 1) && (
+                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-4 rounded mb-4" role="alert">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div>
+                                <strong className="font-bold">🎉 Congratulations! </strong>
+                                <span>Your campaign has been successful. You can now withdraw your funds.</span>
+                            </div>
+
+                            <Button
+                                onClick={handleWithdraw}
+                                className="bg-green-500 hover:bg-green-700 text-white"
+                            >
+                                Withdraw
+                            </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {campaign?.state == 2 && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-4 rounded mb-4" role="alert">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div>
+                                <strong className="font-bold">😞 Campaign Failed. </strong>
+                                <span>You can now request a refund of your contribution.</span>
+                            </div>
+
+                            <Button
+                                onClick={handleRefund}
+                                className="bg-red-500 hover:bg-red-700 text-white"
+                            >
+                                Refund
+                            </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    
                     <div className="w-fit mx-auto border border-gray-300 rounded-md p-4 my-4 text-center">
                         <span className="block text-sm text-gray-700">Balance</span>
                         <span className=" text-lg font-bold">
-                            {campaign?.balance}
+                            {campaign?.balance ? ethers.formatEther(campaign.balance) : "0"} ETH
                         </span>
                     </div>
                    
@@ -299,12 +338,12 @@ const CampaignPage = () => {
 
                     <div className='mt-2'>
                         <span className='mr-4'>Minimum Goal:</span>
-                        <span className="">{campaign?.minGoal}</span>
+                        <span className="">{campaign?.minGoal ? ethers.formatEther(campaign.minGoal) : "0"} ETH</span>
                     </div>
 
                     <div className='mt-2'>
                         <span className='mr-4'>Maximum Goal:</span>
-                        <span className="  ">{campaign?.maxGoal}</span>
+                        <span className="  ">{campaign?.maxGoal ? ethers.formatEther(campaign.maxGoal) : "0"} ETH</span>
                     </div>
 
                         <div className='mt-2'>
@@ -314,29 +353,6 @@ const CampaignPage = () => {
                         </span>
                     </div>
 
-                     {/* withdraw buttons */}
-                    {isOwner() && (campaign?.state == 1 || campaign?.state == 3) && (
-                        <div className="text-right">
-                            <Button
-                                onClick={handleWithdraw}
-                                className=" bg-green-500 hover:bg-green-700 text-white p-2"
-                            >
-                            Withdraw
-                            </Button>
-                        </div>
-                    )}
-
-                    {/* Refund */}
-                    {campaign?.state == 2 && (
-                        <div className="text-right">
-                            <Button
-                                onClick={handleRefund}
-                                className="bg-gray-500 hover:bg-gray-700 text-white p-2"
-                            >
-                                Refund
-                            </Button>
-                        </div>
-                    )}
 
                     <TiersSection
                         tiers={campaign?.tiers || []}

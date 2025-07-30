@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner"
+import { ethers } from "ethers";
 
 export default function CreateCampaignForm() {
   const [progress, setProgress] = useState<string>("");
@@ -76,6 +77,23 @@ export default function CreateCampaignForm() {
     };
   };
 
+  // 🔹 Convert wei to ETH
+  const minGoalInEth = useMemo(() => {
+    try {
+      return form._minGoal ? ethers.formatEther(form._minGoal) : "";
+    } catch {
+      return "";
+    }
+  }, [form._minGoal]);
+
+  const maxGoalInEth = useMemo(() => {
+    try {
+      return form._maxGoal ? ethers.formatEther(form._maxGoal) : "";
+    } catch {
+      return "";
+    }
+  }, [form._maxGoal]);
+
   return (
     <>
       <NavBarCampaigns />
@@ -101,6 +119,11 @@ export default function CreateCampaignForm() {
         </div>
         <div>
           <Label htmlFor="_minGoal" className="mb-2">Minimum Goal (wei)</Label>
+          {minGoalInEth && (
+            <p className="text-sm text-muted-foreground mb-1">
+              ≈ {minGoalInEth} ETH
+            </p>
+          )}
           <Input
             id="_minGoal"
             name="_minGoal"
@@ -113,6 +136,11 @@ export default function CreateCampaignForm() {
         </div>
         <div>
           <Label htmlFor="_maxGoal" className="mb-2">Maximum Goal (wei)</Label>
+          {maxGoalInEth && (
+            <p className="text-sm text-muted-foreground mb-1">
+              ≈ {maxGoalInEth} ETH
+            </p>
+          )}
           <Input
             id="_maxGoal"
             name="_maxGoal"
