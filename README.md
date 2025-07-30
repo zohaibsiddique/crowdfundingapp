@@ -1,8 +1,14 @@
-# Crowdfunding app
+Here’s your updated `README.md` for the **Crowdfunding App**, combining your existing smart contract description with clear frontend + contract usage instructions:
 
-The **Crowdfunding smart contract** enables the creation and management of a single, flexible, tier-based fundraising campaign on the Ethereum blockchain. Each campaign is initialized with essential metadata including a name, description, funding goal, and a deadline defined in days. The campaign owner holds administrative privileges such as managing contribution tiers, pausing or resuming the campaign, withdrawing funds, and extending the deadline if the campaign is still active. The contract supports **tiered contributions**, allowing the owner to define multiple funding levels with specific names and fixed contribution amounts. Contributors (backers) can select a tier to fund by sending the exact required ETH value; their total contributions and funded tiers are securely recorded.
+---
 
-The contract includes a **campaign state machine** that automatically transitions between three states — Active, Successful, and Failed — based on whether the funding goal has been met and if the deadline has passed. If the goal is met in time, the owner is allowed to withdraw the raised funds. If the campaign fails (i.e., the goal is not met by the deadline), users can **claim refunds** of their contributions. A pause mechanism is integrated, allowing the campaign to be temporarily halted, during which contributions are blocked to protect against unforeseen issues or abuse. Additionally, the contract provides several helper functions to query the campaign’s balance, get a list of tiers, check tier participation by a user, and determine the current campaign status based on live data. This combination of features makes the contract a well-structured foundation for running decentralized crowdfunding efforts with clear access control and fund management logic.
+# 🧠 Crowdfunding App – Fullstack dApp (Smart Contract + Frontend)
+
+The **Crowdfunding App** is a full-featured decentralized fundraising platform that combines an Ethereum smart contract with a modern React-based frontend. It allows campaign creators to launch, manage, and monitor tier-based fundraising efforts in a secure, transparent, and user-friendly way.
+
+---
+
+## ⚙️ Features
 
 | Feature                | Description                                            |
 | ---------------------- | ------------------------------------------------------ |
@@ -16,3 +22,82 @@ The contract includes a **campaign state machine** that automatically transition
 | Deadline extension     | Owner can extend time during active phase              |
 | State-checking helpers | `getCampaignStatus`, `getTiers`, `hasFundedTier`, etc. |
 
+---
+
+## 🧪 Technologies Used
+
+* Solidity + Hardhat (for smart contract development)
+* Ethers.js (for frontend interaction)
+* React + Vite + TailwindCSS (frontend interface)
+* ShadCN UI (for components)
+* Hardhat Ignition (for deployment automation)
+
+---
+
+## 🚀 How to Run Locally
+
+### 🧾 Prerequisites
+
+* Node.js (>= 18.x)
+* npm
+* Hardhat (`npm install --save-dev hardhat`)
+* Metamask or other Ethereum wallet for testing
+
+---
+
+### 📦 Installation & Setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/yourusername/crowdfunding-dapp.git
+cd crowdfunding-dapp
+
+# 2. Install dependencies
+npm install
+
+# 3. Start local Hardhat network (in project root)
+npx hardhat node
+```
+
+---
+
+### 🚀 Deploy Smart Contract
+
+```bash
+# 4. In a new terminal, deploy the contract using Hardhat Ignition
+npx hardhat ignition deploy ./ignition/modules/Token.js --network localhost
+```
+
+> 🔁 Replace `localhost` with your desired network like `sepolia` or `goerli` if deploying to testnets.
+
+---
+
+### 💻 Start Frontend
+
+```bash
+# 5. Go to frontend directory
+cd frontend
+
+# 6. Run the development server
+npm run dev
+```
+
+The app will now be available at `http://localhost:5173` (or as specified by Vite).
+
+---
+
+## 🧑‍💻 Developer Notes
+
+* Contract addresses and ABI are automatically picked from the deployment output or environment variables.
+* Supports dynamic UI state changes based on contract state: campaign success, failure, refunds, etc.
+* Includes fallback error messages for common reverts like `Contract is paused.`
+
+---
+
+## 📄 License
+
+MIT License – feel free to fork and build on it!
+
+---
+
+Let me know if you want me to also include `.env` example or environment setup guide.
