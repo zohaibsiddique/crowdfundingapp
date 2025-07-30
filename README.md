@@ -1,7 +1,3 @@
-Here’s your updated `README.md` for the **Crowdfunding App**, combining your existing smart contract description with clear frontend + contract usage instructions:
-
----
-
 # 🧠 Crowdfunding App – Fullstack dApp (Smart Contract + Frontend)
 
 The **Crowdfunding App** is a full-featured decentralized fundraising platform that combines an Ethereum smart contract with a modern React-based frontend. It allows campaign creators to launch, manage, and monitor tier-based fundraising efforts in a secure, transparent, and user-friendly way.
