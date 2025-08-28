@@ -93,7 +93,3 @@ The app will now be available at `http://localhost:5173` (or as specified by Vit
 ## 📄 License
 
 MIT License – feel free to fork and build on it!
-
----
-
-Let me know if you want me to also include `.env` example or environment setup guide.
